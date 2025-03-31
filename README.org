@@ -14,8 +14,18 @@ Bunch of stuff taken from [[https://github.com/LionyxML/emacs-solo][emacs-solo]]
  * org olivetti mode
  * Dashboard
 * Fonts
+:PROPERTIES:
+:ID:       781c9955-cd49-4736-ae96-0a1efa7e2142
+:END:
  * Geistmono Nerd Font
  * Alegreya
 sometimes I use:
  * Typestar OCR
  * Iosevka
+
+   #+DOWNLOADED: screenshot @ 2025-03-31 23:44:29
+   [[file:images/Fonts/2025-03-31_23-44-29_screenshot.png]]
+
+
+   #+DOWNLOADED: screenshot @ 2025-03-31 23:44:07
+   [[file:images/Fonts/2025-03-31_23-44-07_screenshot.png]]
