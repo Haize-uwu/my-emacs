@@ -23,7 +23,7 @@ sometimes I use:
  * Typestar OCR
  * Iosevka
 
-  #+DOWNLOADED: screenshot @ 2025-03-31 23:44:29
+ #+DOWNLOADED: screenshot @ 2025-03-31 23:44:29
    [[file:images/Fonts/2025-03-31_23-44-29_screenshot.png]]
 
 
