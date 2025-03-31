@@ -1,0 +1,21 @@
+* Packages
+ * Rainbow Delimiters
+ * Magit
+ * Org bullets
+ * Org Download
+ * Nerd Icons Completion
+ * Eglot and Company; for code completion and stuff
+ * ef-themes
+ * sweet-theme
+ * doom-themes
+ * spaceway $\leftarrow$ current theme from [[https://github.com/Gavinok][Gavinok]]
+Bunch of stuff taken from [[https://github.com/LionyxML/emacs-solo][emacs-solo]]
+ * modeline
+ * org olivetti mode
+ * Dashboard
+* Fonts
+ * Geistmono Nerd Font
+ * Alegreya
+sometimes I use:
+ * Typestar OCR
+ * Iosevka
