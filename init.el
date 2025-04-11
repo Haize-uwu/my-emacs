@@ -24,7 +24,7 @@
 ;; UI in Early init
 ;; ------------------------
 (setq auto-save-default t
-      make-backup-files t)
+      make-backup-files nil)
 ;;(setq display-line-numbers 'relative)
 (global-display-line-numbers-mode 1)  ;; Show line numbers
 (setq confirm-kill-emacs #'y-or-n-p)  ;; Ask before quitting
@@ -36,7 +36,13 @@
 ;; open file at last edited position
 (save-place-mode 1)
 
+;; recent files list in minbuffer
+(recentf-mode 1)
+(setq recentf-max-menu-items 15)
+(global-set-key "\C-x\ \C-r" 'recentf-open-files)
+
 (set-face-attribute 'default nil :family "GeistMono Nerd Font" :height 130)
+
 (set-face-attribute 'variable-pitch nil :family "Alegreya":height 140)
 ;; (set-face-attribute 'default nil :family "Iosevka" :height 155)
 ;; (set-face-attribute 'variable-pitch nil :family "Iosevka Aile")
@@ -44,6 +50,15 @@
 
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
+
+
+;; PROJECT MANAGMENT WITH PROJECTILE
+(use-package projectile
+  :ensure t
+  :init (projectile-mode +1)
+  :config
+  (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map))
+
 
 ;;; ELEC_PAIR
 (use-package elec-pair
@@ -71,7 +86,7 @@
          (left-padding (max 0 (/ (- win-width text-width) 2)))
 	 (top-padding (max 0 (/ (- win-height text-height)2))))
     (dotimes (_ top-padding) (insert "\n"))
-
+    
     ;; Define a helper function to insert centered text
     (defun insert-centered (text)
       (insert (make-string  left-padding ?\s) text "\n"))
@@ -93,7 +108,7 @@
     (insert-centered (format "\tEmacs version: %s" emacs-version))
     (insert "\n")
     
-
+    
     (insert "\n\n"))
 
   (read-only-mode 1)   ;; Make buffer read-only again
@@ -426,35 +441,23 @@
 ;;   (load-theme 'modus-vivendi-tinted t))
 
 
-;; spaceway themes
+;;spaceway themes
 (use-package spaceway-theme
   :ensure nil
   :load-path "lisp/spaceway/"
   :config
   (global-hl-line-mode t)
   (set-frame-parameter nil 'cursor-color "#dc322f")
-  (add-to-list 'default-frame-alist '(cursor-color . "#dc322f"))
+  (add-to-list 'default-frame-alist '(cursor-color . "#dc322f")))
   
 (use-package ef-themes
   :ensure t)
 (use-package doom-themes
   :ensure t)
-(customize-set-variable 'custom-safe-themes t)
+(setq custom-safe-themes t)
 
 (load-theme 'spaceway t)
-  (setenv "SCHEME" "dark"))
-
-;; does it see this was last edited? 
-;; (use-package sweet-theme
-;;   :ensure t)
-
-
-
-
-
-
-
-
+(setenv "SCHEME" "dark")
 
 
 ;; ----------------------
@@ -576,6 +579,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-enabled-themes '(spaceway))
  '(custom-safe-themes
    '("72ab3be5ff65bead7f537bf684a2369f8977d57b76c7781197e2c58e36a07254"
      "93011fe35859772a6766df8a4be817add8bfe105246173206478a0706f88b33d"
@@ -607,8 +611,9 @@
  '(package-selected-packages
    '(citar color-themes corfu dash dash-functional doom-themes ef-themes
 	   lsp-mode lsp-ui magit orderless org org-bullets
-	   org-download org-modern python-mode rainbow-delimiters
-	   sweet-theme tree-sitter-langs vertico yasnippet)))
+	   org-download org-modern projectile python-mode
+	   rainbow-delimiters sweet-theme tree-sitter-langs vertico
+	   yasnippet)))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

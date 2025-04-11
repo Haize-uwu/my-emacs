@@ -5,6 +5,8 @@
       inhibit-startup-screen t
       inhibit-startup-echo-area-message t
       initial-scratch-message nil)
+;; set the frame size
+(setq default-frame-alist '((width . 160) (height . 50) (pixel-width . 1200) (pixel-height . 800)))
 
 (menu-bar-mode -1)
 (tool-bar-mode -1)
@@ -39,6 +41,7 @@
   (set-face-attribute 'default nil :background "#292D3E" :foreground "#292D3E"))
 
 (my-emacs/avoid-initial-flash-of-light)
+
 
 ;; Better Window Management handling
 (setq frame-resize-pixelwise t
