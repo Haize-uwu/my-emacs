@@ -32,6 +32,7 @@
 (global-visual-line-mode 1)  ;; Enables word wrap everywhere
 (electric-pair-mode 1)  ;; Enable auto-pairing for (), {}, []
 (setq electric-pair-preserve-balance t)  ;; Keep pairs balanced
+(setq use-dialog-box nil)
 
 ;; open file at last edited position
 (save-place-mode 1)
@@ -66,9 +67,12 @@
   :defer t
   :hook (after-init . electric-pair-mode))
 
+
 ;; ------------------------
 ;; Startup Dashboard
 ;; ------------------------
+;; use-package with package.el:
+
 
 (defun my-dashboard ()
   "Create a simple startup dashboard and center it in the buffer."
@@ -76,17 +80,17 @@
   (read-only-mode 0)   ;; Allow modification
   (erase-buffer)
   (display-line-numbers-mode -1)
-  
+
   ;; Get window width for centering
   (let* ((win-width (window-width))
 	 (win-height (window-height))
          (text-width 40)  ;; Adjust this based on content width
 	 (text-height 20)
-	 
+
          (left-padding (max 0 (/ (- win-width text-width) 2)))
 	 (top-padding (max 0 (/ (- win-height text-height)2))))
     (dotimes (_ top-padding) (insert "\n"))
-    
+
     ;; Define a helper function to insert centered text
     (defun insert-centered (text)
       (insert (make-string  left-padding ?\s) text "\n"))
@@ -107,15 +111,21 @@
 
     (insert-centered (format "\tEmacs version: %s" emacs-version))
     (insert "\n")
-    
-    
+
+
     (insert "\n\n"))
 
   (read-only-mode 1)   ;; Make buffer read-only again
-  (goto-char (point-min)))
-
+  (goto-char (point-min)))  
+ 
 (add-hook 'emacs-startup-hook #'my-dashboard)
-;;(add-hook 'dashboard-mode-hook (lambda () (display-line-numbers-mode -1)))
+
+;; have the dashboard start on client
+
+(setq initial-buffer-choice
+      (lambda ()
+        (my-dashboard)
+        (get-buffer "*dashboard*")))
 
 ;; ------------------------
 ;; Buffer Management (Ibuffer)
@@ -137,6 +147,17 @@
   :ensure t
   :bind (("C-x g" . magit-status)))
 (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
+
+;; -----------------------
+;; diff-hl tracking changes
+;; -----------------------
+(use-package diff-hl
+  :hook ((prog-mode . diff-hl-mode)
+         (magit-post-refresh . diff-hl-magit-post-refresh))
+  :config
+  (diff-hl-flydiff-mode)) 
+(setq diff-hl-margin-mode t)
+
 
 ;; ------------------------
 ;; Org Mode Configuration
@@ -608,12 +629,7 @@
      "59c36051a521e3ea68dc530ded1c7be169cd19e8873b7994bfc02a216041bf3b"
      "fae5872ff90462502b3bedfe689c02d2fa281bc63d33cb007b94a199af6ccf24"
      default))
- '(package-selected-packages
-   '(citar color-themes corfu dash dash-functional doom-themes ef-themes
-	   lsp-mode lsp-ui magit orderless org org-bullets
-	   org-download org-modern projectile python-mode
-	   rainbow-delimiters sweet-theme tree-sitter-langs vertico
-	   yasnippet)))
+ '(package-selected-packages nil))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
