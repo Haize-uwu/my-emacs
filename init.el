@@ -66,6 +66,7 @@
   :ensure nil
   :defer t
   :hook (after-init . electric-pair-mode))
+
 ;;;;;;;;;;;;;;;;;;
 ;; undo redo
 ;;;;;;;;;;;;;;;;;
@@ -81,99 +82,63 @@
 ;; ------------------------
 ;; Startup Dashboard
 ;; ------------------------
-;; use-package with package.el:
-(use-package doom-dashboard
-  ;; For Straight Users
-  :straight (doom-dashboard :host github
-                                :repo "emacs-dashboard/doom-dashboard")
-  ;; Or for built-in package-vc
-  ;; :vc (:url "https://github.com/emacs-dashboard/doom-dashboard.git" :rev :newest)
-  :after dashboard
-  :demand t
-  ;; Movement keys like doom.
-  :bind
-  (:map dashboard-mode-map
-        ("<remap> <dashboard-previous-line>" . widget-backward)
-        ("<remap> <dashboard-next-line>" . widget-forward)
-        ("<remap> <previous-line>" . widget-backward)
-        ("<remap> <next-line>"  . widget-forward)
-        ("<remap> <right-char>" . widget-forward)
-        ("<remap> <left-char>"  . widget-backward))
-  :custom
-  (dashboard-banner-logo-title "E M A C S")
-  (dashboard-startup-banner 
-   (concat doom-dashboard-banner-directory "bcc.txt")) ; Use banner you want
-  (dashboard-footer-icon 
-   (nerd-icons-faicon "nf-fa-github_alt" :face 'success :height 1.5))
-  (dashboard-page-separator "\n")
-  (dashboard-startupify-list `(dashboard-insert-banner
-                               dashboard-insert-banner-title
-                               dashboard-insert-newline
-                               dashboard-insert-items
-                               ,(dashboard-insert-newline 2)
-                               dashboard-insert-init-info
-                               ,(dashboard-insert-newline 2)
-                               doom-dashboard-insert-homepage-footer))
-  (dashboard-item-generators
-   '((recents   . doom-dashboard-insert-recents-shortmenu)
-     (bookmarks . doom-dashboard-insert-bookmark-shortmenu)
-     (projects  . doom-dashboard-insert-project-shortmenu)
-     (agenda    . doom-dashboard-insert-org-agenda-shortmenu)))
-  (dashboard-items '(projects agenda bookmarks recents)))
-
-;; (defun my-dashboard ()
-;;   "Create a simple startup dashboard and center it in the buffer."
-;;   (switch-to-buffer "*dashboard*")
-;;   (read-only-mode 0)   ;; Allow modification
-;;   (erase-buffer)
-;;   (display-line-numbers-mode -1)
-
-;;   ;; Get window width for centering
-;;   (let* ((win-width (window-width))
-;; 	 (win-height (window-height))
-;;          (text-width 50)  ;; Adjust this based on content width
-;; 	 (text-height 20)
-
-;;          (left-padding (max 0 (/ (- win-width text-width) 2)))
-;; 	 (top-padding (max 0 (/ (- win-height text-height)2))))
-;;     (dotimes (_ top-padding) (insert "\n"))
-
-;;     ;; Define a helper function to insert centered text
-;;     (defun insert-centered (text)
-;;       (insert (make-string  left-padding ?\s) text "\n"))
-
-;;     (insert "\n\n\n\n")
-;;     (insert-centered "███████╗███╗   ███╗ █████╗  ██████╗███████╗")
-;;     (insert-centered "██╔════╝████╗ ████║██╔══██╗██╔════╝██╔════╝")
-;;     (insert-centered "█████╗  ██╔████╔██║███████║██║     ███████╗")
-;;     (insert-centered "██╔══╝  ██║╚██╔╝██║██╔══██║██║     ╚════██║")
-;;     (insert-centered "███████╗██║ ╚═╝ ██║██║  ██║╚██████╗███████║")
-;;     (insert-centered "╚══════╝╚═╝     ╚═╝╚═╝  ╚═╝ ╚═════╝╚══════╝")
-;;     (insert "\n\n")
-;;     (insert-centered (format "\tWelcome to Emacs, %s!\n" user-login-name))
-;;     (insert-centered (format "\tLoading time : %s" (emacs-init-time)))
-;;     (insert-centered (format "\tPackages     : %s" (length package-activated-list)))
-;;     (insert "\n\n")
 
 
-;;     (insert-centered (format "\tEmacs version: %s" emacs-version))
-;;     (insert "\n")
+(defun my-dashboard ()
+  "Create a simple startup dashboard and center it in the buffer."
+  (switch-to-buffer "*dashboard*")
+  (read-only-mode 0)   ;; Allow modification
+  (erase-buffer)
+  (display-line-numbers-mode -1)
+
+  ;; Get window width for centering
+  (let* ((win-width (window-width))
+	 (win-height (window-height))
+         (text-width 40)  ;; Adjust this based on content width
+	 (text-height 20)
+
+         (left-padding (max 0 (/ (- win-width text-width) 2)))
+	 (top-padding (max 0 (/ (- win-height text-height)2))))
+    (dotimes (_ top-padding) (insert "\n"))
+
+    ;; Define a helper function to insert centered text
+    (defun insert-centered (text)
+      (insert (make-string  left-padding ?\s) text "\n"))
+
+    (insert "\n\n\n\n")
+    (insert-centered "███████╗███╗   ███╗ █████╗  ██████╗███████╗")
+    (insert-centered "██╔════╝████╗ ████║██╔══██╗██╔════╝██╔════╝")
+    (insert-centered "█████╗  ██╔████╔██║███████║██║     ███████╗")
+    (insert-centered "██╔══╝  ██║╚██╔╝██║██╔══██║██║     ╚════██║")
+    (insert-centered "███████╗██║ ╚═╝ ██║██║  ██║╚██████╗███████║")
+    (insert-centered "╚══════╝╚═╝     ╚═╝╚═╝  ╚═╝ ╚═════╝╚══════╝")
+    (insert "\n\n")
+    (insert-centered (format "\tWelcome to Emacs, %s!\n" user-login-name))
+    (insert-centered (format "\tLoading time : %s" (emacs-init-time)))
+    (insert-centered (format "\tPackages     : %s" (length package-activated-list)))
+    (insert "\n\n")
 
 
-;;     (insert "\n\n"))
+    (insert-centered (format "\tEmacs version: %s" emacs-version))
+    (insert "\n")
 
-;;   (read-only-mode 1)   ;; Make buffer read-only again
-;;   (goto-char (point-min)))  
- 
-;; (add-hook 'emacs-startup-hook #'my-dashboard)
 
-;; ;; have the dashboard start on client
+    (insert "\n\n"))
 
-;; (setq initial-buffer-choice
-;;       (lambda ()
-;;         (my-dashboard)
-;;         (get-buffer "*dashboard*")))
+  (read-only-mode 1)   ;; Make buffer read-only again
+  (goto-char (point-min)))  
 
+(defun my-dashboard-update-on-resize (_frame)
+  (when (string= (buffer-name) "*dashboard*")
+    (my-dashboard)))
+
+(add-hook 'window-size-change-functions #'my-dashboard-update-on-resize)
+(add-hook 'emacs-startup-hook #'my-dashboard)
+
+(setq initial-buffer-choice
+      (lambda ()
+        (my-dashboard)
+        (get-buffer "*dashboard*")))
 ;; ------------------------
 ;; Buffer Management (Ibuffer)
 ;; ------------------------
@@ -676,7 +641,10 @@
      "59c36051a521e3ea68dc530ded1c7be169cd19e8873b7994bfc02a216041bf3b"
      "fae5872ff90462502b3bedfe689c02d2fa281bc63d33cb007b94a199af6ccf24"
      default))
- '(package-selected-packages nil))
+ '(package-selected-packages nil)
+ '(package-vc-selected-packages
+   '((doom-dashboard :url
+		     "https://github.com/emacs-dashboard/doom-dashboard.git"))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
