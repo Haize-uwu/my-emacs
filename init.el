@@ -35,14 +35,15 @@
 (setq use-dialog-box nil)
 
 ;; open file at last edited position
-(save-place-mode 1)
+(setq save-place-mode t)
 
 ;; recent files list in minbuffer
 (recentf-mode 1)
 (setq recentf-max-menu-items 15)
 (global-set-key "\C-x\ \C-r" 'recentf-open-files)
 
-(set-face-attribute 'default nil :family "GeistMono Nerd Font" :height 130)
+(set-face-attribute 'default nil :family "Inconsolata" :height 150)
+;;(set-face-attribute 'default nil :family "GeistMono Nerd Font" :height 130)
 
 (set-face-attribute 'variable-pitch nil :family "Alegreya":height 140)
 ;; (set-face-attribute 'default nil :family "Iosevka" :height 155)
@@ -78,7 +79,7 @@
   :after undo-fu
   :config
   (undo-fu-session-global-mode))
-
+;; testing save place, now
 ;; ------------------------
 ;; Startup Dashboard
 ;; ------------------------
@@ -102,24 +103,25 @@
     (dotimes (_ top-padding) (insert "\n"))
 
     ;; Define a helper function to insert centered text
-    (defun insert-centered (text)
-      (insert (make-string  left-padding ?\s) text "\n"))
+    (defun insert-centered (text &optional face)
+      (let ((line (concat (make-string left-padding ?\s) text "\n")))
+	(insert (propertize line 'face face))))
 
     (insert "\n\n\n\n")
-    (insert-centered "███████╗███╗   ███╗ █████╗  ██████╗███████╗")
-    (insert-centered "██╔════╝████╗ ████║██╔══██╗██╔════╝██╔════╝")
-    (insert-centered "█████╗  ██╔████╔██║███████║██║     ███████╗")
-    (insert-centered "██╔══╝  ██║╚██╔╝██║██╔══██║██║     ╚════██║")
-    (insert-centered "███████╗██║ ╚═╝ ██║██║  ██║╚██████╗███████║")
-    (insert-centered "╚══════╝╚═╝     ╚═╝╚═╝  ╚═╝ ╚═════╝╚══════╝")
+    (insert-centered "███████╗███╗   ███╗ █████╗  ██████╗███████╗" '(:foreground "#8B2252"))
+    (insert-centered "██╔════╝████╗ ████║██╔══██╗██╔════╝██╔════╝" '(:foreground "#8B2252"))
+    (insert-centered "█████╗  ██╔████╔██║███████║██║     ███████╗" '(:foreground "#8B2252"))
+    (insert-centered "██╔══╝  ██║╚██╔╝██║██╔══██║██║     ╚════██║" '(:foreground "#8B2252"))
+    (insert-centered "███████╗██║ ╚═╝ ██║██║  ██║╚██████╗███████║" '(:foreground "#8B2252"))
+    (insert-centered "╚══════╝╚═╝     ╚═╝╚═╝  ╚═╝ ╚═════╝╚══════╝" '(:foreground "#8B2252"))
     (insert "\n\n")
-    (insert-centered (format "\tWelcome to Emacs, %s!\n" user-login-name))
-    (insert-centered (format "\tLoading time : %s" (emacs-init-time)))
-    (insert-centered (format "\tPackages     : %s" (length package-activated-list)))
+    (insert-centered (format "\tWelcome to Emacs, %s!\n" user-login-name) '(:foreground "#8B2252"))
+    (insert-centered (format "\tLoading time : %s" (emacs-init-time)) '(:foreground "#8B2252"))
+    (insert-centered (format "\tPackages     : %s" (length package-activated-list)) '(:foreground "#8B2252"))
     (insert "\n\n")
 
 
-    (insert-centered (format "\tEmacs version: %s" emacs-version))
+    (insert-centered (format "\tEmacs version: %s" emacs-version) '(:foreground "#8B2252"))
     (insert "\n")
 
 
@@ -390,107 +392,49 @@
 ;; ------------------------
 ;;; THEMES
 ;; ------------------------
-;; (use-package modus-themes
-;;   :ensure nil
-;;   :defer t
-;;   :custom
-;;   (modus-themes-italic-constructs t)
-;;   (modus-themes-bold-constructs t)
-;;   (modus-themes-mixed-fonts nil)
-;;   (modus-themes-prompts '(bold intense))
-;;   (modus-themes-common-palette-overrides
-;;    `((bg-main "#292D3E")
-;;      (bg-active bg-main)
-;;      (fg-main "#EEFFFF")
-;;      (fg-active fg-main)
-;;      (fg-mode-line-active "#A6Accd")
-;;      (bg-mode-line-active "#232635")
-;;      (fg-mode-line-inactive "#676E95")
-;;      (bg-mode-line-inactive "#282c3d")
-;;      ;; (border-mode-line-active "#676E95")
-;;      ;; (border-mode-line-inactive bg-dim)
-;;      (border-mode-line-active nil)
-;;      (border-mode-line-inactive nil)
-;;      (bg-tab-bar      "#242837")
-;;      (bg-tab-current  bg-main)
-;;      (bg-tab-other    "#242837")
-;;      (fg-prompt "#c792ea")
-;;      (bg-prompt unspecified)
-;;      (bg-hover-secondary "#676E95")
-;;      (bg-completion "#2f447f")
-;;      (fg-completion white)
-;;      (bg-region "#3C435E")
-;;      (fg-region white)
-
-;;      (fg-line-number-active fg-main)
-;;      (fg-line-number-inactive "gray50")
-;;      (bg-line-number-active unspecified)
-;;      (bg-line-number-inactive "#292D3E")
-;;      (fringe "#292D3E")
-
-;;      (fg-heading-0 "#82aaff")
-;;      (fg-heading-1 "#82aaff")
-;;      (fg-heading-2 "#c792ea")
-;;      (fg-heading-3 "#bb80b3")
-;;      (fg-heading-4 "#a1bfff")
-
-;;      (fg-prose-verbatim "#c3e88d")
-;;      (bg-prose-block-contents "#232635")
-;;      (fg-prose-block-delimiter "#676E95")
-;;      (bg-prose-block-delimiter bg-prose-block-contents)
-
-;;      (accent-1 "#79a8ff")
-
-;;      (keyword "#89DDFF")
-;;      (builtin "#82aaff")
-;;      (comment "#676E95")
-;;      (string "#c3e88d")
-;;      (fnname "#82aaff")
-;;      (type "#c792ea")
-;;      (variable "#c792ea")
-;;      (docstring "#8d92af")
-;;      (constant "#f78c6c")))
-;;   :config
-;;   (modus-themes-with-colors
-;;    (custom-set-faces
-;;     `(tab-bar
-;;       ((,c
-;;         :background "#232635"
-;;         :foreground "#A6Accd"
-;;         ;; :box (:line-width 1 :color "#676E95")
-;;         )))
-;;     `(tab-bar-tab
-;;       ((,c
-;;         ;; :background "#232635"
-;;         ;; :underline t
-;;         ;; :box (:line-width 1 :color "#676E95")
-;;         )))
-;;     `(tab-bar-tab-inactive
-;;       ((,c
-;;         ;; :background "#232635"
-;;         ;; :box (:line-width 1 :color "#676E95")
-;;         )))))
-;;   :init
-;;   (load-theme 'modus-vivendi-tinted t))
-
-
+(setq custom-safe-themes t)
 ;;spaceway themes
-(use-package spaceway-theme
-  :ensure nil
-  :load-path "lisp/spaceway/"
-  :config
-  (global-hl-line-mode t)
-  (set-frame-parameter nil 'cursor-color "#dc322f")
-  (add-to-list 'default-frame-alist '(cursor-color . "#dc322f")))
+;; (use-package spaceway-theme
+;;   :ensure nil
+;;   :load-path "lisp/spaceway/"
+;;   :config
+;;   (global-hl-line-mode t)
+;;   (set-frame-parameter nil 'cursor-color "#dc322f")
+;;   (add-to-list 'default-frame-alist '(cursor-color . "#dc322f")))
   
 (use-package ef-themes
   :ensure t)
 (use-package doom-themes
   :ensure t)
-(setq custom-safe-themes t)
 
-(load-theme 'spaceway t)
-(setenv "SCHEME" "dark")
+(use-package nofrils-acme-theme
+  :ensure t
+  :config
+  (load-theme 'nofrils-light t)
+  (global-hl-line-mode t)
+
+  ;; Set background and face colors
+  (defun my/set-nofrils-bg ()
+    ;;#959AA8
+    ;;"#BAB5A1"
+    (let ((bg "#959AA8")) ;; your custom background
+      (set-face-background 'default bg)
+      (set-face-background 'fringe bg)
+      ;;(set-face-background 'linum bg)
+      (set-face-background 'line-number bg)
+      (set-face-background 'line-number-current-line bg)
+      (set-face-background 'mode-line bg)
+      (set-face-background 'mode-line-inactive bg)
+      (add-to-list 'default-frame-alist `(background-color . ,bg))
+      (set-background-color bg)))
+
+  (my/set-nofrils-bg))
+
+(set-face-foreground 'font-lock-comment-face "#4A6A94")
+
+(set-face-attribute 'mode-line nil :foreground "#b79f79" :background "#1a1e25")
+;;(load-theme 'spaceway t)
+;;(setenv "SCHEME" "light")
 
 
 ;; ----------------------
@@ -614,7 +558,11 @@
  ;; If there is more than one, they won't work right.
  '(custom-enabled-themes '(spaceway))
  '(custom-safe-themes
-   '("72ab3be5ff65bead7f537bf684a2369f8977d57b76c7781197e2c58e36a07254"
+   '("c21904759f8d6d73f8be4a03c71a81b9908e71276c490f664022bf997111b458"
+     "6e8f43c0b76fc272cfa811b709c62fb4bf79855cf2ce0389a6539eda7d0ca4ca"
+     "9b18d731d2660fd002e10582b206128c0b97eebe2e4a6570db15cb27613f2c86"
+     "b1162ee87ca94024dbb677dc40c8d8e5ec02d3ccf505bed683f4aa11604468d0"
+     "72ab3be5ff65bead7f537bf684a2369f8977d57b76c7781197e2c58e36a07254"
      "93011fe35859772a6766df8a4be817add8bfe105246173206478a0706f88b33d"
      "452068f2985179294c73c5964c730a10e62164deed004a8ab68a5d778a2581da"
      "350fef8767e45b0f81dd54c986ee6854857f27067bac88d2b1c2a6fa7fecb522"
@@ -652,3 +600,4 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+ 
