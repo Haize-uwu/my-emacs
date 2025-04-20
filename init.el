@@ -417,7 +417,7 @@
   (defun my/set-nofrils-bg ()
     ;;#959AA8
     ;;"#BAB5A1"
-    (let ((bg "#959AA8")) ;; your custom background
+    (let ((bg "#A9A9A9")) ;; your custom background
       (set-face-background 'default bg)
       (set-face-background 'fringe bg)
       ;;(set-face-background 'linum bg)
@@ -432,7 +432,7 @@
 
 (set-face-foreground 'font-lock-comment-face "#4A6A94")
 
-(set-face-attribute 'mode-line nil :foreground "#b79f79" :background "#1a1e25")
+(set-face-attribute 'mode-line nil :foreground "#000000" :background "#686868")
 ;;(load-theme 'spaceway t)
 ;;(setenv "SCHEME" "light")
 
