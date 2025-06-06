@@ -22,9 +22,18 @@
 ;; ------------------------
 ;; UI Tweaks and Visual Enhancements
 ;; UI in Early init
+;; AND KEY BINDS
 ;; ------------------------
-(setq auto-save-default t
-      make-backup-files nil)
+(setq auto-save-default t)        ;; enable auto-save
+(setq auto-save-timeout 20)       ;; save after 20 seconds of idle
+(setq auto-save-interval 200)     ;; or after 200 input events
+
+(setq backup-directory-alist `(("." . "~/.emacs.d/backups"))) ;; put backups in one place
+(setq auto-save-file-name-transforms `((".*" "~/.emacs.d/auto-saves/" t)))
+(make-directory "~/.emacs.d/auto-saves/" t)
+(setq auto-save-list-file-prefix "~/.emacs.d/auto-save-list/.saves-") ;; promp recovery
+
+
 ;;(setq display-line-numbers 'relative)
 (global-display-line-numbers-mode 1)  ;; Show line numbers
 (setq confirm-kill-emacs #'y-or-n-p)  ;; Ask before quitting
@@ -34,6 +43,9 @@
 (setq electric-pair-preserve-balance t)  ;; Keep pairs balanced
 (setq use-dialog-box nil)
 
+
+(global-set-key (kbd "C-x k") (lambda () (interactive) (kill-buffer (current-buffer))))
+
 ;; open file at last edited position
 (setq save-place-mode t)
 
@@ -42,9 +54,11 @@
 (setq recentf-max-menu-items 15)
 (global-set-key "\C-x\ \C-r" 'recentf-open-files)
 
-(set-face-attribute 'default nil :family "Inconsolata" :height 150)
-;;(set-face-attribute 'default nil :family "GeistMono Nerd Font" :height 130)
+;;(set-face-attribute 'default nil :family "Anonymous Pro" :height 130)
 
+
+
+(set-face-attribute 'default nil :family "GeistMono Nerd Font" :height 150)
 (set-face-attribute 'variable-pitch nil :family "Alegreya":height 140)
 ;; (set-face-attribute 'default nil :family "Iosevka" :height 155)
 ;; (set-face-attribute 'variable-pitch nil :family "Iosevka Aile")
@@ -79,6 +93,13 @@
   :after undo-fu
   :config
   (undo-fu-session-global-mode))
+
+;;;;;;;;;;;;;;;;;;;
+;; SPELL CHECKER ;;
+;;;;;;;;;;;;;;;;;;;
+(setq ispell-program-name "hunspell")
+(setq ispell-dictionary "en_US") 
+
 ;; testing save place, now
 ;; ------------------------
 ;; Startup Dashboard
@@ -108,20 +129,20 @@
 	(insert (propertize line 'face face))))
 
     (insert "\n\n\n\n")
-    (insert-centered "███████╗███╗   ███╗ █████╗  ██████╗███████╗" '(:foreground "#8B2252"))
-    (insert-centered "██╔════╝████╗ ████║██╔══██╗██╔════╝██╔════╝" '(:foreground "#8B2252"))
-    (insert-centered "█████╗  ██╔████╔██║███████║██║     ███████╗" '(:foreground "#8B2252"))
-    (insert-centered "██╔══╝  ██║╚██╔╝██║██╔══██║██║     ╚════██║" '(:foreground "#8B2252"))
-    (insert-centered "███████╗██║ ╚═╝ ██║██║  ██║╚██████╗███████║" '(:foreground "#8B2252"))
-    (insert-centered "╚══════╝╚═╝     ╚═╝╚═╝  ╚═╝ ╚═════╝╚══════╝" '(:foreground "#8B2252"))
+    (insert-centered "███████╗███╗   ███╗ █████╗  ██████╗███████╗" '(:foreground "#716C9C"))
+    (insert-centered "██╔════╝████╗ ████║██╔══██╗██╔════╝██╔════╝" '(:foreground "#716C9C"))
+    (insert-centered "█████╗  ██╔████╔██║███████║██║     ███████╗" '(:foreground "#716C9C"))
+    (insert-centered "██╔══╝  ██║╚██╔╝██║██╔══██║██║     ╚════██║" '(:foreground "#716C9C"))
+    (insert-centered "███████╗██║ ╚═╝ ██║██║  ██║╚██████╗███████║" '(:foreground "#716C9C"))
+    (insert-centered "╚══════╝╚═╝     ╚═╝╚═╝  ╚═╝ ╚═════╝╚══════╝" '(:foreground "#716C9C"))
     (insert "\n\n")
-    (insert-centered (format "\tWelcome to Emacs, %s!\n" user-login-name) '(:foreground "#8B2252"))
-    (insert-centered (format "\tLoading time : %s" (emacs-init-time)) '(:foreground "#8B2252"))
-    (insert-centered (format "\tPackages     : %s" (length package-activated-list)) '(:foreground "#8B2252"))
+    (insert-centered (format "\t  Welcome to Emacs, %s!\n" user-login-name) '(:foreground "#716C9C"))
+    (insert-centered (format "\t  Loading time : %s" (emacs-init-time)) '(:foreground "#716C9C"))
+    (insert-centered (format "\t  Packages     : %s" (length package-activated-list)) '(:foreground "#716C9C"))
     (insert "\n\n")
 
 
-    (insert-centered (format "\tEmacs version: %s" emacs-version) '(:foreground "#8B2252"))
+    (insert-centered (format "\t  Emacs version: %s" emacs-version) '(:foreground "#716C9C"))
     (insert "\n")
 
 
@@ -134,13 +155,19 @@
   (when (string= (buffer-name) "*dashboard*")
     (my-dashboard)))
 
-(add-hook 'window-size-change-functions #'my-dashboard-update-on-resize)
-(add-hook 'emacs-startup-hook #'my-dashboard)
+;;(add-hook 'window-size-change-functions #'my-dashboard-update-on-resize)
+;;(add-hook 'emacs-startup-hook #'my-dashboard)
 
-(setq initial-buffer-choice
-      (lambda ()
-        (my-dashboard)
-        (get-buffer "*dashboard*")))
+
+
+(setq initial-buffer-choice t)
+
+(defun my-show-dashboard ()
+  (when (display-graphic-p)
+    (my-dashboard)))
+
+;;(add-hook 'server-after-make-frame-hook #'my-show-dashboard)
+
 ;; ------------------------
 ;; Buffer Management (Ibuffer)
 ;; ------------------------
@@ -197,6 +224,13 @@
   :config
   (setq org-bullets-bullet-list '("▶" "◉" "○" "◆" "•")))
 
+;; Better editing with pretty symbols
+(use-package org-appear
+  :hook (org-mode . org-appear-mode)
+  :config
+  (setq org-appear-autolinks t
+        org-appear-autoemphasis t
+        org-appear-autosubmarkers t))
 ;; (use-package corfu
 ;;   :ensure t
 ;;   :init
@@ -224,10 +258,13 @@
 (use-package org-download
   :after org
   :config
+  
   ;; Save images in a subdirectory relative to the Org file
   (setq org-download-method 'directory)
   (setq org-download-image-dir "./images") ;; Store images in "images/" relative to the Org file
-
+  ;; Fix screenshot method for Wayland
+    (setq org-download-screenshot-method "grim -g \"$(slurp)\" %s")
+;;  (setq org-download-screenshot-method "wl-paste --type image/png > %s")
   ;; Automatically create the directory if it doesn't exist
   (add-hook 'org-mode-hook
             (lambda ()
@@ -235,7 +272,13 @@
                           (concat (file-name-directory (buffer-file-name)) "images/"))))
 
   ;; Enable org-download in Dired mode
-  (add-hook 'dired-mode-hook 'org-download-enable))
+  (add-hook 'dired-mode-hook 'org-download-enable)
+  (define-key org-mode-map (kbd "M-p") 'org-download-screenshot))
+;;  (global-set-key (kbd "M-p")  #'org-download-screenshot)
+
+  
+
+
 
 
 (defun my-add-electric-pairs ()
@@ -393,48 +436,60 @@
 ;;; THEMES
 ;; ------------------------
 (setq custom-safe-themes t)
-;;spaceway themes
+ 
+
 ;; (use-package spaceway-theme
 ;;   :ensure nil
 ;;   :load-path "lisp/spaceway/"
 ;;   :config
+;;   (load-theme 'spaceway t)
 ;;   (global-hl-line-mode t)
 ;;   (set-frame-parameter nil 'cursor-color "#dc322f")
-;;   (add-to-list 'default-frame-alist '(cursor-color . "#dc322f")))
-  
-(use-package ef-themes
-  :ensure t)
-(use-package doom-themes
-  :ensure t)
+;;   (add-to-list 'default-frame-alist '(cursor-color . "#dc322f"))
+;;    ;; Set background and face colors
+;;   (defun my/set-nofrils-bg ()
+;;     ;;#959AA8
+;;     ;;"#BAB5A1"
+;;     (let ((bg "#262626")) ;; your custom background
+;;       (set-face-background 'default bg)
+;;       (set-face-background 'fringe bg)
+;;       ;;(set-face-background 'linum bg)
+;;       (set-face-background 'line-number bg)
+;;       (set-face-background 'line-number-current-line bg)
+;;       (set-face-background 'mode-line bg)
+;;       (set-face-background 'mode-line-inactive bg)
+;;       (add-to-list 'default-frame-alist `(background-color . ,bg))
+;;       (set-background-color bg)))
+;;   (my/set-nofrils-bg))
 
-(use-package nofrils-acme-theme
+;; (use-package ef-themes
+;;   :ensure t)
+(use-package doom-themes
   :ensure t
   :config
-  (load-theme 'nofrils-light t)
-  (global-hl-line-mode t)
+  (load-theme 'doom-ayu-dark t))
 
-  ;; Set background and face colors
-  (defun my/set-nofrils-bg ()
-    ;;#959AA8
-    ;;"#BAB5A1"
-    (let ((bg "#A9A9A9")) ;; your custom background
-      (set-face-background 'default bg)
-      (set-face-background 'fringe bg)
-      ;;(set-face-background 'linum bg)
-      (set-face-background 'line-number bg)
-      (set-face-background 'line-number-current-line bg)
-      (set-face-background 'mode-line bg)
-      (set-face-background 'mode-line-inactive bg)
-      (add-to-list 'default-frame-alist `(background-color . ,bg))
-      (set-background-color bg)))
 
-  (my/set-nofrils-bg))
+;; (use-package almost-mono-themes
+;;   :ensure t
+;;   :config
+;;   (load-theme 'almost-mono-cream))
 
-(set-face-foreground 'font-lock-comment-face "#4A6A94")
+;; (use-package nofrils-acme-theme
+;;   :ensure t
+;;   :config
+;;   (load-theme 'nofrils-light t)
+;;   (global-hl-line-mode t)
 
-(set-face-attribute 'mode-line nil :foreground "#000000" :background "#686868")
+
+
+;;   (my/set-nofrils-bg))
+;; (set-face-foreground 'font-lock-comment-face "#3D4459")
+;; ;;(set-face-foreground 'font-lock-comment-face "#4A6A94")
+
+;; (set-face-attribute 'mode-line nil :foreground "#000000" :background "#686868")
 ;;(load-theme 'spaceway t)
-;;(setenv "SCHEME" "light")
+(setenv "SCHEME" "dark")
 
 
 ;; ----------------------
@@ -449,7 +504,7 @@
   :init
   ;; Shorten big branches names
   (defun emacs-solo/shorten-vc-mode (vc)
-    "Shorten VC string to at most 20 characters.
+    "Shorten VC string to at most 20 characters.qq
  Replacing `Git-' with a branch symbol."
     (let* ((vc (replace-regexp-in-string "^ Git[:-]" "  " vc))) ;; Options:   ᚠ ⎇
       (if (> (length vc) 20)
@@ -476,8 +531,8 @@
                   "  "
                   (vc-mode (:eval (emacs-solo/shorten-vc-mode vc-mode)))
                   "  "
-                  mode-line-modes
-                  mode-line-misc-info
+                  ;;mode-line-modes
+                  ;;mode-line-misc-info
                   "  ")
                 project-mode-line t
                 mode-line-buffer-identification '(" %b")
@@ -556,9 +611,27 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-enabled-themes '(spaceway))
  '(custom-safe-themes
-   '("c21904759f8d6d73f8be4a03c71a81b9908e71276c490f664022bf997111b458"
+   '("d6b934330450d9de1112cbb7617eaf929244d192c4ffb1b9e6b63ad574784aad"
+     "c5878086e65614424a84ad5c758b07e9edcf4c513e08a1c5b1533f313d1b17f1"
+     "7964b513f8a2bb14803e717e0ac0123f100fb92160dcf4a467f530868ebaae3e"
+     "1ad12cda71588cc82e74f1cabeed99705c6a60d23ee1bb355c293ba9c000d4ac"
+     "6f1f6a1a3cff62cc860ad6e787151b9b8599f4471d40ed746ea2819fcd184e1a"
+     "4ade6b630ba8cbab10703b27fd05bb43aaf8a3e5ba8c2dc1ea4a2de5f8d45882"
+     "d0fd069415ef23ccc21ccb0e54d93bdbb996a6cce48ffce7f810826bb243502c"
+     "8f5b54bf6a36fe1c138219960dd324aad8ab1f62f543bed73ef5ad60956e36ae"
+     "cbd85ab34afb47003fa7f814a462c24affb1de81ebf172b78cb4e65186ba59d2"
+     "ffba0482d3548c9494e84c1324d527f73ea4e43fff8dfd0e48faa8fc6d5c2bc7"
+     "ae20535e46a88faea5d65775ca5510c7385cbf334dfa7dde93c0cd22ed663ba0"
+     "df6dfd55673f40364b1970440f0b0cb8ba7149282cf415b81aaad2d98b0f0290"
+     "571661a9d205cb32dfed5566019ad54f5bb3415d2d88f7ea1d00c7c794e70a36"
+     "77fff78cc13a2ff41ad0a8ba2f09e8efd3c7e16be20725606c095f9a19c24d3d"
+     "7c28419e963b04bf7ad14f3d8f6655c078de75e4944843ef9522dbecfcd8717d"
+     "c8c4baac2988652a760554e0e7ce11a0fe0f8468736be2b79355c9d9cc14b751"
+     "3c08da65265d80a7c8fc99fe51df3697d0fa6786a58a477a1b22887b4f116f62"
+     "30d174000ea9cbddecd6cc695943afb7dba66b302a14f9db5dd65074e70cc744"
+     "f9fe320c8e4e759d4788c6d5aa30c65caae7153a844d90618565b8d9e49b16e0"
+     "c21904759f8d6d73f8be4a03c71a81b9908e71276c490f664022bf997111b458"
      "6e8f43c0b76fc272cfa811b709c62fb4bf79855cf2ce0389a6539eda7d0ca4ca"
      "9b18d731d2660fd002e10582b206128c0b97eebe2e4a6570db15cb27613f2c86"
      "b1162ee87ca94024dbb677dc40c8d8e5ec02d3ccf505bed683f4aa11604468d0"
