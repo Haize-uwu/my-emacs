@@ -45,6 +45,11 @@
 
 
 (global-set-key (kbd "C-x k") (lambda () (interactive) (kill-buffer (current-buffer))))
+(global-set-key (kbd "C-c b") #'previous-buffer)
+(global-set-key (kbd "C-c n") #'next-buffer)
+(global-set-key (kbd "C-c v") #'mode-line-other-buffer)
+
+
 
 ;; open file at last edited position
 (setq save-place-mode t)
@@ -54,10 +59,33 @@
 (setq recentf-max-menu-items 15)
 (global-set-key "\C-x\ \C-r" 'recentf-open-files)
 
+;; tab bar settings
+;; (tab-bar-mode 1)
+;; (set-face-attribute 'tab-bar nil :inherit 'mode-line :background "#CC6666aa")
+;; (set-face-attribute 'tab-bar-tab nil :inherit 'mode-line :background "#CC6666" :foreground "#F5F5F5")
+;; (set-face-attribute 'tab-bar-tab-inactive nil :inherit 'mode-line-inactive :foreground "black")
+;; ;; creating and deleting tabs
+;; (defun my/find-file-in-new-tab (orig-fun &rest args)
+;;   "Advice to open files in a new tab."
+;;   (tab-bar-new-tab)
+;;   (apply orig-fun args))
+
+;; (advice-add 'find-file :around #'my/find-file-in-new-tab)
+
+
+;; (defun my/auto-close-tab-when-buffer-killed ()
+;;   "Close the current tab if it becomes empty after killing a buffer."
+;;   (when (and (one-window-p t)
+;;              (eq (length (window-list)) 1))
+;;     (tab-bar-close-tab)))
+
+;; (add-hook 'kill-buffer-hook #'my/auto-close-tab-when-buffer-killed)
+
+
 ;;(set-face-attribute 'default nil :family "Anonymous Pro" :height 130)
 
 
-
+;;(set-face-attribute 'default nil :family "Workbench:style=Delicate" :height 110)
 (set-face-attribute 'default nil :family "GeistMono Nerd Font" :height 150)
 (set-face-attribute 'variable-pitch nil :family "Alegreya":height 140)
 ;; (set-face-attribute 'default nil :family "Iosevka" :height 155)
@@ -109,47 +137,50 @@
 (defun my-dashboard ()
   "Create a simple startup dashboard and center it in the buffer."
   (switch-to-buffer "*dashboard*")
-  (read-only-mode 0)   ;; Allow modification
+  (read-only-mode 0)
   (erase-buffer)
   (display-line-numbers-mode -1)
 
-  ;; Get window width for centering
-  (let* ((win-width (window-width))
-	 (win-height (window-height))
-         (text-width 40)  ;; Adjust this based on content width
-	 (text-height 20)
-
+  (let* ((img-path "/home/haize/Pictures/weeb/w3.png")
+         (img-width 230)
+         (img-height 250)
+         (img (create-image img-path nil nil :width img-width :height img-height))
+         (char-width (frame-char-width))
+         (win-width (window-width))
+         (win-height (window-height))
+         (text-width (floor (/ img-width char-width)))
+         (text-height 20)
          (left-padding (max 0 (/ (- win-width text-width) 2)))
-	 (top-padding (max 0 (/ (- win-height text-height)2))))
+         (top-padding (max 0 (/ (- win-height text-height) 2)))
+         (img-left-pad (max 0 (/ (- win-width text-width) 2))))
+
+    ;; Insert vertical padding
     (dotimes (_ top-padding) (insert "\n"))
 
-    ;; Define a helper function to insert centered text
+    ;; Insert image centered
+    (insert (make-string img-left-pad ?\s))
+    (insert-image img)
+    (insert "\n\n")
+
+    ;; Define helper function to insert centered text
     (defun insert-centered (text &optional face)
       (let ((line (concat (make-string left-padding ?\s) text "\n")))
-	(insert (propertize line 'face face))))
+        (insert (propertize line 'face face))))
 
-    (insert "\n\n\n\n")
-    (insert-centered "███████╗███╗   ███╗ █████╗  ██████╗███████╗" '(:foreground "#716C9C"))
-    (insert-centered "██╔════╝████╗ ████║██╔══██╗██╔════╝██╔════╝" '(:foreground "#716C9C"))
-    (insert-centered "█████╗  ██╔████╔██║███████║██║     ███████╗" '(:foreground "#716C9C"))
-    (insert-centered "██╔══╝  ██║╚██╔╝██║██╔══██║██║     ╚════██║" '(:foreground "#716C9C"))
-    (insert-centered "███████╗██║ ╚═╝ ██║██║  ██║╚██████╗███████║" '(:foreground "#716C9C"))
-    (insert-centered "╚══════╝╚═╝     ╚═╝╚═╝  ╚═╝ ╚═════╝╚══════╝" '(:foreground "#716C9C"))
-    (insert "\n\n")
-    (insert-centered (format "\t  Welcome to Emacs, %s!\n" user-login-name) '(:foreground "#716C9C"))
-    (insert-centered (format "\t  Loading time : %s" (emacs-init-time)) '(:foreground "#716C9C"))
-    (insert-centered (format "\t  Packages     : %s" (length package-activated-list)) '(:foreground "#716C9C"))
-    (insert "\n\n")
-
-
-    (insert-centered (format "\t  Emacs version: %s" emacs-version) '(:foreground "#716C9C"))
-    (insert "\n")
-
-
+    ;; Insert centered text
+    (insert-centered (format "Welcome to Emacs, %s!" user-login-name) '(:foreground "#716C9C"))
+    (insert-centered (format "Loading time : %.2fs" (string-to-number(emacs-init-time))) '(:foreground "#716C9C"))
+    (insert-centered (format "Packages     : %s" (length package-activated-list)) '(:foreground "#716C9C"))
+    
+    (insert-centered (format "Emacs version: %s" emacs-version) '(:foreground "#716C9C"))
     (insert "\n\n"))
 
-  (read-only-mode 1)   ;; Make buffer read-only again
-  (goto-char (point-min)))  
+  (read-only-mode 1)
+  (goto-char (point-min)))
+
+;; go to custom dashboard buffer
+(global-set-key (kbd "M-h") (lambda () (interactive) (my-dashboard)))
+
 
 (defun my-dashboard-update-on-resize (_frame)
   (when (string= (buffer-name) "*dashboard*")
@@ -367,6 +398,9 @@
 
 (add-to-list 'package-selected-packages 'dash)
 
+(use-package go-mode
+  :mode "\\.go\\'")
+
 
 (use-package eglot
   :hook ((c-mode . eglot-ensure)
@@ -379,7 +413,8 @@
   (setq eglot-ignored-server-capabilities '(:hoverProvider)) ;; Disable if unwanted
   (setq eglot-send-changes-idle-time 0.5)  ;; Reduce delay in sending changes
   (setq eglot-autoshutdown t)  ;; Automatically shutdown LSP servers when not needed
-
+  (add-to-list 'eglot-server-programs
+               '((c++-mode c-mode) . ("clangd" "--header-insertion=never")))
   ;; Set up keybindings similar to lsp-mode
   (define-key eglot-mode-map (kbd "M-.") #'xref-find-definitions)  ;; Jump to definition
   (define-key eglot-mode-map (kbd "M-,") #'xref-pop-marker-stack) ;; Jump back
@@ -396,7 +431,9 @@
   :config
   (setq company-idle-delay 0)
   (setq company-minimum-prefix-length 1)
-  (global-company-mode))
+  (global-company-mode)
+  ;;(setq company-backends '(company-capf))
+  )
 
 ;; Treesitter
 ;; (use-package tree-sitter
@@ -435,8 +472,12 @@
 ;; ------------------------
 ;;; THEMES
 ;; ------------------------
+
+;;Some themes I like :
+;; snow-theme
+;; snowish-theme
+;;
 (setq custom-safe-themes t)
- 
 
 ;; (use-package spaceway-theme
 ;;   :ensure nil
@@ -463,11 +504,19 @@
 ;;   (my/set-nofrils-bg))
 
 ;; (use-package ef-themes
-;;   :ensure t)
+;;   :ensure t
+;;   :config 
+;;   (load-theme 'doom-ayu-light t))
+
+;; (use-package apropospriate-theme
+;;   :ensure t
+;;   :config 
+;;   (load-theme 'apropospriate-light t))
+
 (use-package doom-themes
   :ensure t
   :config
-  (load-theme 'doom-ayu-dark t))
+  (load-theme 'doom-solarized-light t))
 
 
 ;; (use-package almost-mono-themes
@@ -612,7 +661,43 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("d6b934330450d9de1112cbb7617eaf929244d192c4ffb1b9e6b63ad574784aad"
+   '("a368631abdadffb6882f9994637d7216167912311447f1ec02f9dc58e9cc62a9"
+     "8d3ef5ff6273f2a552152c7febc40eabca26bae05bd12bc85062e2dc224cde9a"
+     "1bc640af8b000ae0275dbffefa2eb22ec91f6de53aca87221c125dc710057511"
+     "0f1341c0096825b1e5d8f2ed90996025a0d013a0978677956a9e61408fcd2c77"
+     "d97ac0baa0b67be4f7523795621ea5096939a47e8b46378f79e78846e0e4ad3d"
+     "7de64ff2bb2f94d7679a7e9019e23c3bf1a6a04ba54341c36e7cf2d2e56e2bcc"
+     "3f24dd8f542f4aa8186a41d5770eb383f446d7228cd7a3413b9f5e0ec0d5f3c0"
+     "83550d0386203f010fa42ad1af064a766cfec06fc2f42eb4f2d89ab646f3ac01"
+     "f1b2de4bc88d1120782b0417fe97f97cc9ac7c5798282087d4d1d9290e3193bb"
+     "1dcac4042a8331449ae1cadcf83b121854bec0371f861954d3ff791e81c8dfc6"
+     "aeb5508a548f1716142142095013b6317de5869418c91b16d75ce4043c35eb2b"
+     "5244ba0273a952a536e07abaad1fdf7c90d7ebb3647f36269c23bfd1cf20b0b8"
+     "5c7720c63b729140ed88cf35413f36c728ab7c70f8cd8422d9ee1cedeb618de5"
+     "211621592803ada9c81ec8f8ba0659df185f9dc06183fcd0e40fbf646c995f23"
+     "da75eceab6bea9298e04ce5b4b07349f8c02da305734f7c0c8c6af7b5eaa9738"
+     "7ec8fd456c0c117c99e3a3b16aaf09ed3fb91879f6601b1ea0eeaee9c6def5d9"
+     "e8bd9bbf6506afca133125b0be48b1f033b1c8647c628652ab7a2fe065c10ef0"
+     "f64189544da6f16bab285747d04a92bd57c7e7813d8c24c30f382f087d460a33"
+     "ffafb0e9f63935183713b204c11d22225008559fa62133a69848835f4f4a758c"
+     "c1d5759fcb18b20fd95357dcd63ff90780283b14023422765d531330a3d3cec2"
+     "0c83e0b50946e39e237769ad368a08f2cd1c854ccbcd1a01d39fdce4d6f86478"
+     "9d5124bef86c2348d7d4774ca384ae7b6027ff7f6eb3c401378e298ce605f83a"
+     "dccf4a8f1aaf5f24d2ab63af1aa75fd9d535c83377f8e26380162e888be0c6a9"
+     "0d2c5679b6d087686dcfd4d7e57ed8e8aedcccc7f1a478cd69704c02e4ee36fe"
+     "90185f1d8362727f2aeac7a3d67d3aec789f55c10bb47dada4eefb2e14aa5d01"
+     "aff0396925324838889f011fd3f5a0b91652b88f5fd0611f7b10021cc76f9e09"
+     "3d9938bbef24ecee9f2632cb25339bf2312d062b398f0dfb99b918f8f11e11b1"
+     "d6b369a3f09f34cdbaed93eeefcc6a0e05e135d187252e01b0031559b1671e97"
+     "d609d9aaf89d935677b04d34e4449ba3f8bbfdcaaeeaab3d21ee035f43321ff1"
+     "6e18353d35efc18952c57d3c7ef966cad563dc65a2bba0660b951d990e23fc07"
+     "b41d0a9413fb0034cea34eb8c9f89f6e243bdd76bccecf8292eb1fefa42eaf0a"
+     "6af300029805f10970ebec4cea3134f381cd02f04c96acba083c76e2da23f3ec"
+     "cd5f8f91cc2560c017cc9ec24a9ab637451e36afd22e00a03e08d7b1b87c29ca"
+     "ac893acecb0f1cf2b6ccea5c70ea97516c13c2b80c07f3292c21d6eb0cb45239"
+     "e5b6491e99e98d0586766aaf9eb32b1dad3bc3c0c7a1921849d65d3f6d8621a6"
+     "e5494adf200eeff1505839672150dde6053e086869189c381b1ce9b792dda3a8"
+     "d6b934330450d9de1112cbb7617eaf929244d192c4ffb1b9e6b63ad574784aad"
      "c5878086e65614424a84ad5c758b07e9edcf4c513e08a1c5b1533f313d1b17f1"
      "7964b513f8a2bb14803e717e0ac0123f100fb92160dcf4a467f530868ebaae3e"
      "1ad12cda71588cc82e74f1cabeed99705c6a60d23ee1bb355c293ba9c000d4ac"
@@ -662,7 +747,14 @@
      "59c36051a521e3ea68dc530ded1c7be169cd19e8873b7994bfc02a216041bf3b"
      "fae5872ff90462502b3bedfe689c02d2fa281bc63d33cb007b94a199af6ccf24"
      default))
- '(package-selected-packages nil)
+ '(package-selected-packages
+   '(almost-mono-themes apropospriate-theme company company-glsl diff-hl
+			doom-themes ef-themes go-mode magit neotree
+			nerd-icons-completion nofrils-acme-theme
+			orderless org-appear org-bullets org-download
+			projectile rainbow-delimiters sweet-theme
+			undo-fu undo-fu-session vertico
+			xresources-theme yasnippet))
  '(package-vc-selected-packages
    '((doom-dashboard :url
 		     "https://github.com/emacs-dashboard/doom-dashboard.git"))))
