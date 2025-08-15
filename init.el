@@ -35,14 +35,14 @@
 
 
 ;;(setq display-line-numbers 'relative)
-(global-display-line-numbers-mode 1)  ;; Show line numbers
+;;(global-display-line-numbers-mode 1)  ;; Show line numbers
 (setq confirm-kill-emacs #'y-or-n-p)  ;; Ask before quitting
 (setq confirm-kill-processes nil)        ;; Don't ask about background processes
 (global-visual-line-mode 1)  ;; Enables word wrap everywhere
 (electric-pair-mode 1)  ;; Enable auto-pairing for (), {}, []
 (setq electric-pair-preserve-balance t)  ;; Keep pairs balanced
 (setq use-dialog-box nil)
-
+(global-display-line-numbers-mode -1)
 
 (global-set-key (kbd "C-x k") (lambda () (interactive) (kill-buffer (current-buffer))))
 (global-set-key (kbd "C-c b") #'previous-buffer)
@@ -86,7 +86,7 @@
 
 
 ;;(set-face-attribute 'default nil :family "Workbench:style=Delicate" :height 110)
-(set-face-attribute 'default nil :family "GeistMono Nerd Font" :height 150)
+(set-face-attribute 'default nil :family "GeistMono Nerd Font" :height 130)
 (set-face-attribute 'variable-pitch nil :family "Alegreya":height 140)
 ;; (set-face-attribute 'default nil :family "Iosevka" :height 155)
 ;; (set-face-attribute 'variable-pitch nil :family "Iosevka Aile")
@@ -133,6 +133,18 @@
 ;; Startup Dashboard
 ;; ------------------------
 
+;; doom modeline
+;; (use-package doom-modeline
+;;   :ensure t
+;;   :config
+;;   (doom-modeline-mode 1)
+;;   (display-time-mode 1)
+;;   (setq doom-modeline-battery t)
+;;   (setq doom-modeline-buffer-encoding -1)
+;;   (setq doom-modeline-percent -1)
+;;   (setq doom-modeline-buffer-file-name-style 'file-name))
+
+;; doom dashboard
 
 (defun my-dashboard ()
   "Create a simple startup dashboard and center it in the buffer."
@@ -203,6 +215,12 @@
 ;; Buffer Management (Ibuffer)
 ;; ------------------------
 (global-set-key (kbd "C-x C-b") 'ibuffer)
+(setq ibuffer-formats
+      '((mark modified read-only " "
+              (name 18 18 :left :elide)
+              " "
+              
+              (mode 16 16 :left :elide))))
 
 ;; -----------------------
 ;; File position save
@@ -304,7 +322,9 @@
 
   ;; Enable org-download in Dired mode
   (add-hook 'dired-mode-hook 'org-download-enable)
-  (define-key org-mode-map (kbd "M-p") 'org-download-screenshot))
+  )
+(with-eval-after-load 'org
+    (define-key org-mode-map (kbd "M-p") #'org-download-screenshot))
 ;;  (global-set-key (kbd "M-p")  #'org-download-screenshot)
 
   
@@ -413,15 +433,20 @@
   (setq eglot-ignored-server-capabilities '(:hoverProvider)) ;; Disable if unwanted
   (setq eglot-send-changes-idle-time 0.5)  ;; Reduce delay in sending changes
   (setq eglot-autoshutdown t)  ;; Automatically shutdown LSP servers when not needed
+  
   (add-to-list 'eglot-server-programs
                '((c++-mode c-mode) . ("clangd" "--header-insertion=never")))
+  
   ;; Set up keybindings similar to lsp-mode
   (define-key eglot-mode-map (kbd "M-.") #'xref-find-definitions)  ;; Jump to definition
   (define-key eglot-mode-map (kbd "M-,") #'xref-pop-marker-stack) ;; Jump back
   (define-key eglot-mode-map (kbd "C-c h") #'eldoc-doc-buffer) ;; Show documentation
   (define-key eglot-mode-map (kbd "C-c r") #'eglot-rename) ;; Rename symbol
   (define-key eglot-mode-map (kbd "C-c f") #'eglot-format-buffer) ;; Format buffer
-  (define-key eglot-mode-map (kbd "C-c a") #'eglot-code-actions)) ;; Code actions
+  (define-key eglot-mode-map (kbd "C-c a") #'eglot-code-actions) ;; Code actions
+
+  (with-eval-after-load 'eglot
+    (remove-hook 'eglot-managed-mode-hook #'eglot-inlay-hints-mode)))
 
 (use-package yasnippet
   :config (yas-global-mode 1))
@@ -469,6 +494,13 @@
 ;;   :config
 ;;   (setq lsp-ui-doc-enable t
 ;;         lsp-ui-doc-position 'at-point))
+
+
+;;------------ VISUALS --------------
+(use-package spacious-padding
+  :ensure t
+  :config
+  (spacious-padding-mode 1))
 ;; ------------------------
 ;;; THEMES
 ;; ------------------------
@@ -516,7 +548,7 @@
 (use-package doom-themes
   :ensure t
   :config
-  (load-theme 'doom-solarized-light t))
+  (load-theme 'doom-ayu-mirage t))
 
 
 ;; (use-package almost-mono-themes
@@ -575,6 +607,9 @@
                   "   "
                   mode-line-position
                   mode-line-format-right-align
+		  (display-time-mode t)
+		  "  "
+		  (display-battery-mode t)
                   "  "
                   (project-mode-line project-mode-line-format)
                   "  "
@@ -604,8 +639,7 @@
           (setcar trg "")))))
 
   (add-hook 'after-change-major-mode-hook 'emacs-solo/purge-minor-modes))
-;;(display-time-mode t)
-;;(display-battery-mode t)
+
 ;; ---------- EMACS-SOLO-OLIVETTI
 (use-package emacs-solo-olivetti
   :ensure nil
@@ -661,7 +695,11 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("a368631abdadffb6882f9994637d7216167912311447f1ec02f9dc58e9cc62a9"
+   '("a9eeab09d61fef94084a95f82557e147d9630fbbb82a837f971f83e66e21e5ad"
+     "c2c2327f43e997b96cacd297cbd85f9e85879657c5ac69ad10ed568e768fcc36"
+     "ea4dd126d72d30805c083421a50544e235176d9698c8c541b824b60912275ba1"
+     "71b688e7ef7c844512fa7c4de7e99e623de99a2a8b3ac3df4d02f2cd2c3215e7"
+     "a368631abdadffb6882f9994637d7216167912311447f1ec02f9dc58e9cc62a9"
      "8d3ef5ff6273f2a552152c7febc40eabca26bae05bd12bc85062e2dc224cde9a"
      "1bc640af8b000ae0275dbffefa2eb22ec91f6de53aca87221c125dc710057511"
      "0f1341c0096825b1e5d8f2ed90996025a0d013a0978677956a9e61408fcd2c77"
@@ -749,12 +787,13 @@
      default))
  '(package-selected-packages
    '(almost-mono-themes apropospriate-theme company company-glsl diff-hl
-			doom-themes ef-themes go-mode magit neotree
-			nerd-icons-completion nofrils-acme-theme
-			orderless org-appear org-bullets org-download
-			projectile rainbow-delimiters sweet-theme
-			undo-fu undo-fu-session vertico
-			xresources-theme yasnippet))
+			doom-modeline doom-themes ef-themes go-mode
+			magit neotree nerd-icons-completion
+			nofrils-acme-theme orderless org-appear
+			org-bullets org-download projectile
+			rainbow-delimiters spacious-padding
+			sweet-theme undo-fu undo-fu-session vertico
+			vterm xresources-theme yasnippet))
  '(package-vc-selected-packages
    '((doom-dashboard :url
 		     "https://github.com/emacs-dashboard/doom-dashboard.git"))))
