@@ -86,7 +86,7 @@
 
 
 ;;(set-face-attribute 'default nil :family "Workbench:style=Delicate" :height 110)
-(set-face-attribute 'default nil :family "GeistMono Nerd Font" :height 130)
+(set-face-attribute 'default nil :family "GeistMono Nerd Font" :height 120)
 (set-face-attribute 'variable-pitch nil :family "Alegreya":height 140)
 ;; (set-face-attribute 'default nil :family "Iosevka" :height 155)
 ;; (set-face-attribute 'variable-pitch nil :family "Iosevka Aile")
@@ -180,11 +180,11 @@
         (insert (propertize line 'face face))))
 
     ;; Insert centered text
-    (insert-centered (format "Welcome to Emacs, %s!" user-login-name) '(:foreground "#716C9C"))
-    (insert-centered (format "Loading time : %.2fs" (string-to-number(emacs-init-time))) '(:foreground "#716C9C"))
-    (insert-centered (format "Packages     : %s" (length package-activated-list)) '(:foreground "#716C9C"))
+    (insert-centered (format "Welcome to Emacs, %s!" user-login-name) '(:foreground "#DF975B"))
+    (insert-centered (format "Loading time : %.2fs" (string-to-number(emacs-init-time))) '(:foreground "#DF975B"))
+    (insert-centered (format "Packages     : %s" (length package-activated-list)) '(:foreground "#DF975B"))
     
-    (insert-centered (format "Emacs version: %s" emacs-version) '(:foreground "#716C9C"))
+    (insert-centered (format "Emacs version: %s" emacs-version) '(:foreground "#DF975B"))
     (insert "\n\n"))
 
   (read-only-mode 1)
@@ -196,7 +196,7 @@
 
 (defun my-dashboard-update-on-resize (_frame)
   (when (string= (buffer-name) "*dashboard*")
-    (my-dashboard)))
+    (my-dashboard))) 
 
 ;;(add-hook 'window-size-change-functions #'my-dashboard-update-on-resize)
 ;;(add-hook 'emacs-startup-hook #'my-dashboard)
@@ -548,7 +548,7 @@
 (use-package doom-themes
   :ensure t
   :config
-  (load-theme 'doom-ayu-mirage t))
+  (load-theme 'doom-feather-dark t))
 
 
 ;; (use-package almost-mono-themes
@@ -695,7 +695,8 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("a9eeab09d61fef94084a95f82557e147d9630fbbb82a837f971f83e66e21e5ad"
+   '("4b88b7ca61eb48bb22e2a4b589be66ba31ba805860db9ed51b4c484f3ef612a7"
+     "a9eeab09d61fef94084a95f82557e147d9630fbbb82a837f971f83e66e21e5ad"
      "c2c2327f43e997b96cacd297cbd85f9e85879657c5ac69ad10ed568e768fcc36"
      "ea4dd126d72d30805c083421a50544e235176d9698c8c541b824b60912275ba1"
      "71b688e7ef7c844512fa7c4de7e99e623de99a2a8b3ac3df4d02f2cd2c3215e7"
