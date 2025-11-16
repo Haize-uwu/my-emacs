@@ -43,6 +43,29 @@
 (setq electric-pair-preserve-balance t)  ;; Keep pairs balanced
 (setq use-dialog-box nil)
 (global-display-line-numbers-mode -1)
+(global-hl-line-mode t)
+;; (use-package doom-themes
+;;   :ensure t
+;;   :config
+;;   (load-theme 'doom-ayu-light t))
+(load-theme 'doom-moonlight t)
+
+;; (set-face-attribute 'hl-line nil
+;;                     :background "#BCE1F3"
+;;                     :extend t)
+(set-face-attribute 'region nil
+                    :background "#957FB8"  
+                    :distant-foreground nil)
+;;(set-face-attribute 'cursor nil :background "#ff0000")
+(set-face-attribute 'region nil :background "#555577" :extend t)
+;;(set-face-background 'hl-line "#111111")
+
+;; transparency
+(set-frame-parameter nil 'alpha-background 100)
+;;(set-face-attribute 'default nil  :background "#ECF0F1")
+(add-to-list 'default-frame-alist '(alpha-background . 100))
+
+
 
 (global-set-key (kbd "C-x k") (lambda () (interactive) (kill-buffer (current-buffer))))
 (global-set-key (kbd "C-c b") #'previous-buffer)
@@ -61,8 +84,8 @@
 
 ;; tab bar settings
 ;; (tab-bar-mode 1)
-;; (set-face-attribute 'tab-bar nil :inherit 'mode-line :background "#CC6666aa")
-;; (set-face-attribute 'tab-bar-tab nil :inherit 'mode-line :background "#CC6666" :foreground "#F5F5F5")
+;; (set-face-attribute 'tab-bar nil :inherit 'mode-line :background "#AFD17Faa")
+;; (set-face-attribute 'tab-bar-tab nil :inherit 'mode-line :background "#AFD17F" :foreground "#F5F5F5")
 ;; (set-face-attribute 'tab-bar-tab-inactive nil :inherit 'mode-line-inactive :foreground "black")
 ;; ;; creating and deleting tabs
 ;; (defun my/find-file-in-new-tab (orig-fun &rest args)
@@ -70,7 +93,7 @@
 ;;   (tab-bar-new-tab)
 ;;   (apply orig-fun args))
 
-;; (advice-add 'find-file :around #'my/find-file-in-new-tab)
+;; (advice-add 'find-file :around #'my/find-file-in-new-tab) 
 
 
 ;; (defun my/auto-close-tab-when-buffer-killed ()
@@ -85,7 +108,7 @@
 ;;(set-face-attribute 'default nil :family "Anonymous Pro" :height 130)
 
 
-;;(set-face-attribute 'default nil :family "Workbench:style=Delicate" :height 110)
+;;(set-face-attribute 'default nil :family "Terminus" :height 150)
 (set-face-attribute 'default nil :family "GeistMono Nerd Font" :height 120)
 (set-face-attribute 'variable-pitch nil :family "Alegreya":height 140)
 ;; (set-face-attribute 'default nil :family "Iosevka" :height 155)
@@ -133,16 +156,17 @@
 ;; Startup Dashboard
 ;; ------------------------
 
-;; doom modeline
-;; (use-package doom-modeline
-;;   :ensure t
-;;   :config
-;;   (doom-modeline-mode 1)
-;;   (display-time-mode 1)
-;;   (setq doom-modeline-battery t)
-;;   (setq doom-modeline-buffer-encoding -1)
-;;   (setq doom-modeline-percent -1)
-;;   (setq doom-modeline-buffer-file-name-style 'file-name))
+;;doom modeline
+(use-package doom-modeline
+  :ensure t
+  :config
+  (doom-modeline-mode)
+  (display-time-mode)
+  (display-battery-mode)
+  (setq doom-modeline-battery t)
+  (setq doom-modeline-buffer-encoding -1)
+  (setq doom-modeline-percent -1)
+  (setq doom-modeline-buffer-file-name-style 'file-name))
 
 ;; doom dashboard
 
@@ -180,11 +204,11 @@
         (insert (propertize line 'face face))))
 
     ;; Insert centered text
-    (insert-centered (format "Welcome to Emacs, %s!" user-login-name) '(:foreground "#DF975B"))
-    (insert-centered (format "Loading time : %.2fs" (string-to-number(emacs-init-time))) '(:foreground "#DF975B"))
-    (insert-centered (format "Packages     : %s" (length package-activated-list)) '(:foreground "#DF975B"))
+    (insert-centered (format "Welcome to Emacs, %s!" user-login-name) '(:foreground "#AFD17F"))
+    (insert-centered (format "Loading time : %.2fs" (string-to-number(emacs-init-time))) '(:foreground "#AFD17F"))
+    (insert-centered (format "Packages     : %s" (length package-activated-list)) '(:foreground "#AFD17F"))
     
-    (insert-centered (format "Emacs version: %s" emacs-version) '(:foreground "#DF975B"))
+    (insert-centered (format "Emacs version: %s" emacs-version) '(:foreground "#AFD17F"))
     (insert "\n\n"))
 
   (read-only-mode 1)
@@ -323,8 +347,7 @@
   ;; Enable org-download in Dired mode
   (add-hook 'dired-mode-hook 'org-download-enable)
   )
-(with-eval-after-load 'org
-    (define-key org-mode-map (kbd "M-p") #'org-download-screenshot))
+
 ;;  (global-set-key (kbd "M-p")  #'org-download-screenshot)
 
   
@@ -500,7 +523,7 @@
 (use-package spacious-padding
   :ensure t
   :config
-  (spacious-padding-mode 1))
+  (spacious-padding-mode 0))
 ;; ------------------------
 ;;; THEMES
 ;; ------------------------
@@ -545,11 +568,8 @@
 ;;   :config 
 ;;   (load-theme 'apropospriate-light t))
 
-(use-package doom-themes
-  :ensure t
-  :config
-  (load-theme 'doom-feather-dark t))
 
+;; last used feather dark
 
 ;; (use-package almost-mono-themes
 ;;   :ensure t
@@ -578,67 +598,67 @@
 ;; ---------------------
 ;;  Customizations to the mode-line
 ;;
-(use-package emacs-solo-mode-line
-  :ensure nil
-  :no-require t
-  :defer t
-  :init
-  ;; Shorten big branches names
-  (defun emacs-solo/shorten-vc-mode (vc)
-    "Shorten VC string to at most 20 characters.qq
- Replacing `Git-' with a branch symbol."
-    (let* ((vc (replace-regexp-in-string "^ Git[:-]" "  " vc))) ;; Options:   ᚠ ⎇
-      (if (> (length vc) 20)
-          (concat (substring vc 0 20) "…")
-        vc)))
+;; (use-package emacs-solo-mode-line
+;;   :ensure nil
+;;   :no-require t
+;;   :defer t
+;;   :init
+;;   ;; Shorten big branches names
+;;   (defun emacs-solo/shorten-vc-mode (vc)
+;;     "Shorten VC string to at most 20 characters.qq
+;;  Replacing `Git-' with a branch symbol."
+;;     (let* ((vc (replace-regexp-in-string "^ Git[:-]" "  " vc))) ;; Options:   ᚠ ⎇
+;;       (if (> (length vc) 20)
+;;           (concat (substring vc 0 20) "…")
+;;         vc)))
 
-  ;; Formats Modeline
-  (setq-default mode-line-format
-                '("%e" "  "
-                  ;; (:propertize " " display (raise +0.1)) ;; Top padding
-                  ;; (:propertize " " display (raise -0.1)) ;; Bottom padding
-                  (:propertize "λ  " face font-lock-keyword-face)
+;;   ;; Formats Modeline
+;;   (setq-default mode-line-format
+;;                 '("%e" "  "
+;;                   ;; (:propertize " " display (raise +0.1)) ;; Top padding
+;;                   ;; (:propertize " " display (raise -0.1)) ;; Bottom padding
+;;                   (:propertize "λ  " face font-lock-keyword-face)
 
-                  (:propertize
-                   ("" mode-line-mule-info mode-line-client mode-line-modified mode-line-remote))
+;;                   (:propertize
+;;                    ("" mode-line-mule-info mode-line-client mode-line-modified mode-line-remote))
 
-                  mode-line-frame-identification
-                  mode-line-buffer-identification
-                  "   "
-                  mode-line-position
-                  mode-line-format-right-align
-		  (display-time-mode t)
-		  "  "
-		  (display-battery-mode t)
-                  "  "
-                  (project-mode-line project-mode-line-format)
-                  "  "
-                  (vc-mode (:eval (emacs-solo/shorten-vc-mode vc-mode)))
-                  "  "
-                  ;;mode-line-modes
-                  ;;mode-line-misc-info
-                  "  ")
-                project-mode-line t
-                mode-line-buffer-identification '(" %b")
-                mode-line-position-column-line-format '(" %l:%c"))
+;;                   mode-line-frame-identification
+;;                   mode-line-buffer-identification
+;;                   "   "
+;;                   mode-line-position
+;;                   mode-line-format-right-align
+;; 		  (display-time-mode t)
+;; 		  "  "
+;; 		  (display-battery-mode t)
+;;                   "  "
+;;                   (project-mode-line project-mode-line-format)
+;;                   "  "
+;;                   (vc-mode (:eval (emacs-solo/shorten-vc-mode vc-mode)))
+;;                   "  "
+;;                   ;;mode-line-modes
+;;                   ;;mode-line-misc-info
+;;                   "  ")
+;;                 project-mode-line t
+;;                 mode-line-buffer-identification '(" %b")
+;;                 mode-line-position-column-line-format '(" %l:%c"))
 
-  ;; Provides the Diminish functionality
-  (defvar emacs-solo-hidden-minor-modes
-    '(abbrev-mode
-      eldoc-mode
-      flyspell-mode
-      smooth-scroll-mode
-      outline-minor-mode
-      which-key-mode))
+;;   ;; Provides the Diminish functionality
+;;   (defvar emacs-solo-hidden-minor-modes
+;;     '(abbrev-mode
+;;       eldoc-mode
+;;       flyspell-mode
+;;       smooth-scroll-mode
+;;       outline-minor-mode
+;;       which-key-mode))
 
-  (defun emacs-solo/purge-minor-modes ()
-    (interactive)
-    (dolist (x emacs-solo-hidden-minor-modes nil)
-      (let ((trg (cdr (assoc x minor-mode-alist))))
-        (when trg
-          (setcar trg "")))))
+;;   (defun emacs-solo/purge-minor-modes ()
+;;     (interactive)
+;;     (dolist (x emacs-solo-hidden-minor-modes nil)
+;;       (let ((trg (cdr (assoc x minor-mode-alist))))
+;;         (when trg
+;;           (setcar trg "")))))
 
-  (add-hook 'after-change-major-mode-hook 'emacs-solo/purge-minor-modes))
+;;   (add-hook 'after-change-major-mode-hook 'emacs-solo/purge-minor-modes))
 
 ;; ---------- EMACS-SOLO-OLIVETTI
 (use-package emacs-solo-olivetti
@@ -695,7 +715,17 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("4b88b7ca61eb48bb22e2a4b589be66ba31ba805860db9ed51b4c484f3ef612a7"
+   '("daa27dcbe26a280a9425ee90dc7458d85bd540482b93e9fa94d4f43327128077"
+     "d2ab3d4f005a9ad4fb789a8f65606c72f30ce9d281a9e42da55f7f4b9ef5bfc6"
+     "c20728f5c0cb50972b50c929b004a7496d3f2e2ded387bf870f89da25793bb44"
+     "ffa78fc746f85d1c88a2d1691b1e37d21832e9a44a0eeee114a00816eabcdaf9"
+     "c038d994d271ebf2d50fa76db7ed0f288f17b9ad01b425efec09519fa873af53"
+     "4c16a8be2f20a68f0b63979722676a176c4f77e2216cc8fe0ea200f597ceb22e"
+     "e14289199861a5db890065fdc5f3d3c22c5bac607e0dbce7f35ce60e6b55fc52"
+     "fd22a3aac273624858a4184079b7134fb4e97104d1627cb2b488821be765ff17"
+     "b9761a2e568bee658e0ff723dd620d844172943eb5ec4053e2b199c59e0bcc22"
+     "e8ceeba381ba723b59a9abc4961f41583112fc7dc0e886d9fc36fa1dc37b4079"
+     "4b88b7ca61eb48bb22e2a4b589be66ba31ba805860db9ed51b4c484f3ef612a7"
      "a9eeab09d61fef94084a95f82557e147d9630fbbb82a837f971f83e66e21e5ad"
      "c2c2327f43e997b96cacd297cbd85f9e85879657c5ac69ad10ed568e768fcc36"
      "ea4dd126d72d30805c083421a50544e235176d9698c8c541b824b60912275ba1"
@@ -787,14 +817,14 @@
      "fae5872ff90462502b3bedfe689c02d2fa281bc63d33cb007b94a199af6ccf24"
      default))
  '(package-selected-packages
-   '(almost-mono-themes apropospriate-theme company company-glsl diff-hl
-			doom-modeline doom-themes ef-themes go-mode
-			magit neotree nerd-icons-completion
-			nofrils-acme-theme orderless org-appear
-			org-bullets org-download projectile
+   '(almost-mono-themes apropospriate-theme cmake-mode company
+			company-glsl diff-hl doom-modeline doom-themes
+			ef-themes go-mode kanagawa-themes magit
+			neotree nerd-icons-completion orderless
+			org-appear org-bullets org-download projectile
 			rainbow-delimiters spacious-padding
 			sweet-theme undo-fu undo-fu-session vertico
-			vterm xresources-theme yasnippet))
+			vterm yasnippet))
  '(package-vc-selected-packages
    '((doom-dashboard :url
 		     "https://github.com/emacs-dashboard/doom-dashboard.git"))))
