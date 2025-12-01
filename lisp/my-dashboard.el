@@ -1,0 +1,44 @@
+(provide 'my-dashboard)
+
+(defun haize/show-welcome-buffer ()
+  "Show *Welcome* buffer,"
+  (interactive)
+  (with-current-buffer (get-buffer-create "*Welcome*")
+    (setq truncate-lines t)
+    (setq cursor-type nil)
+    (hl-line-mode -1)
+    (setq-local global-hl-line-mode nil)
+    (read-only-mode +1)
+    (haize/refresh-welcome-buffer)
+    (local-set-key (kbd "q") 'kill-this-buffer)
+    (add-hook 'window-size-change-functions
+	      (lambda (_frame)
+		(haize/refresh-welcome-buffer)) nil t)
+    (add-hook 'window-configuration-change-hook
+	      #'haize/refresh-welcome-buffer nil t)
+    (switch-to-buffer (current-buffer))))
+
+(defun haize/refresh-welcome-buffer ()
+  "Refresh welcome buffer content for WINDOW."
+  (when-let* ((inhibit-read-only t)
+	      (welcome-buffer (get-buffer "*Welcome*"))
+	      (window (get-buffer-window welcome-buffer))
+	      (image-path "~/Pictures/a_trash_can_on_the_sidewalk.jpg")
+	      (image (create-image image-path nil nil :max-height 300))
+	      (image-height (cdr (image-size image)))
+	      (image-width (car (image-size image)))
+	      (top-margin (floor (/ (- (window-height window) image-height) 2)))
+	      (left-margin (floor (/ (- (window-width window) image-width) 2)))
+	      (title "Welcome to Emacs"))
+    (with-current-buffer welcome-buffer
+      (erase-buffer)
+      (setq mode-line-format nil)
+      (goto-char (point-min))
+      (insert (make-string top-margin ?\n))
+      (insert (make-string left-margin ?\ ))
+      (insert-image image)
+      (insert "\n\n\n")
+      (insert (make-string (- (floor (/ (- (window-width window) (string-width title)) 2)) 1) ?\ ))
+      (insert (propertize title 'face '(:height 1.2))))))
+;;(haize/show-welcome-buffer)
+  

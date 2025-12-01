@@ -1,4 +1,4 @@
-;; -*- lexical-binding: t; -*-
+ ;; -*- lexical-binding: t; -*-
 
 ;; ------------------------
 ;; Package Management Setup
@@ -44,11 +44,12 @@
 (setq use-dialog-box nil)
 (global-display-line-numbers-mode -1)
 (global-hl-line-mode t)
+(add-hook 'window-setup-hook (lambda () (window-divider-mode -1)))
 ;; (use-package doom-themes
 ;;   :ensure t
 ;;   :config
 ;;   (load-theme 'doom-ayu-light t))
-(load-theme 'doom-moonlight t)
+(load-theme 'doom-old-hope t)
 
 ;; (set-face-attribute 'hl-line nil
 ;;                     :background "#BCE1F3"
@@ -109,7 +110,7 @@
 
 
 ;;(set-face-attribute 'default nil :family "Terminus" :height 150)
-(set-face-attribute 'default nil :family "GeistMono Nerd Font" :height 120)
+(set-face-attribute 'default nil :family "IBM Plex Mono" :height 120)
 (set-face-attribute 'variable-pitch nil :family "Alegreya":height 140)
 ;; (set-face-attribute 'default nil :family "Iosevka" :height 155)
 ;; (set-face-attribute 'variable-pitch nil :family "Iosevka Aile")
@@ -168,62 +169,17 @@
   (setq doom-modeline-percent -1)
   (setq doom-modeline-buffer-file-name-style 'file-name))
 
-;; doom dashboard
-
-(defun my-dashboard ()
-  "Create a simple startup dashboard and center it in the buffer."
-  (switch-to-buffer "*dashboard*")
-  (read-only-mode 0)
-  (erase-buffer)
-  (display-line-numbers-mode -1)
-
-  (let* ((img-path "/home/haize/Pictures/weeb/w3.png")
-         (img-width 230)
-         (img-height 250)
-         (img (create-image img-path nil nil :width img-width :height img-height))
-         (char-width (frame-char-width))
-         (win-width (window-width))
-         (win-height (window-height))
-         (text-width (floor (/ img-width char-width)))
-         (text-height 20)
-         (left-padding (max 0 (/ (- win-width text-width) 2)))
-         (top-padding (max 0 (/ (- win-height text-height) 2)))
-         (img-left-pad (max 0 (/ (- win-width text-width) 2))))
-
-    ;; Insert vertical padding
-    (dotimes (_ top-padding) (insert "\n"))
-
-    ;; Insert image centered
-    (insert (make-string img-left-pad ?\s))
-    (insert-image img)
-    (insert "\n\n")
-
-    ;; Define helper function to insert centered text
-    (defun insert-centered (text &optional face)
-      (let ((line (concat (make-string left-padding ?\s) text "\n")))
-        (insert (propertize line 'face face))))
-
-    ;; Insert centered text
-    (insert-centered (format "Welcome to Emacs, %s!" user-login-name) '(:foreground "#AFD17F"))
-    (insert-centered (format "Loading time : %.2fs" (string-to-number(emacs-init-time))) '(:foreground "#AFD17F"))
-    (insert-centered (format "Packages     : %s" (length package-activated-list)) '(:foreground "#AFD17F"))
-    
-    (insert-centered (format "Emacs version: %s" emacs-version) '(:foreground "#AFD17F"))
-    (insert "\n\n"))
-
-  (read-only-mode 1)
-  (goto-char (point-min)))
-
+(setq user-emacs-directory (expand-file-name "~/.my-emacs/"))
+(add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
+(require 'my-dashboard)
 ;; go to custom dashboard buffer
-(global-set-key (kbd "M-h") (lambda () (interactive) (my-dashboard)))
+(global-set-key (kbd "M-h") (lambda () (interactive) (haize/show-welcome-buffer))) 
 
-
-(defun my-dashboard-update-on-resize (_frame)
-  (when (string= (buffer-name) "*dashboard*")
-    (my-dashboard))) 
+;; theme toggle between light and dark
+(require 'my-theme-toggle)
 
 ;;(add-hook 'window-size-change-functions #'my-dashboard-update-on-resize)
-;;(add-hook 'emacs-startup-hook #'my-dashboard)
+(add-hook 'emacs-startup-hook #'haize/show-welcome-buffer)
 
 
 
@@ -231,7 +187,7 @@
 
 (defun my-show-dashboard ()
   (when (display-graphic-p)
-    (my-dashboard)))
+    (haize/show-welcome-buffer)))
 
 ;;(add-hook 'server-after-make-frame-hook #'my-show-dashboard)
 
@@ -424,6 +380,13 @@
   :config
   (nerd-icons-completion-mode))
 
+(use-package nerd-icons-ibuffer
+  :ensure t
+  :hook (ibuffer-mode . nerd-icons-ibuffer-mode)
+  :config
+  (setq nerd-icons-ibuffer-icon t)
+  (setq nerd-icons-ibuffer-color-icon t))
+
 (use-package vertico
   :init (vertico-mode))
 
@@ -443,7 +406,13 @@
 
 (use-package go-mode
   :mode "\\.go\\'")
-
+  ;; TYPST MODE
+  (use-package typst-ts-mode
+  :ensure t
+  :custom
+  (typst-ts-mode-enable-raw-blocks-highlight t)
+  :config
+  (keymap-set typst-ts-mode-map "C-c C-c" #'typst-ts-tmenu))
 
 (use-package eglot
   :hook ((c-mode . eglot-ensure)
@@ -456,9 +425,11 @@
   (setq eglot-ignored-server-capabilities '(:hoverProvider)) ;; Disable if unwanted
   (setq eglot-send-changes-idle-time 0.5)  ;; Reduce delay in sending changes
   (setq eglot-autoshutdown t)  ;; Automatically shutdown LSP servers when not needed
-  
+
   (add-to-list 'eglot-server-programs
                '((c++-mode c-mode) . ("clangd" "--header-insertion=never")))
+  (add-to-list 'eglot-server-programs
+	       '(typst-ts-mode . ("tinymist")))
   
   ;; Set up keybindings similar to lsp-mode
   (define-key eglot-mode-map (kbd "M-.") #'xref-find-definitions)  ;; Jump to definition
@@ -715,7 +686,17 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("daa27dcbe26a280a9425ee90dc7458d85bd540482b93e9fa94d4f43327128077"
+   '("19d62171e83f2d4d6f7c31fc0a6f437e8cec4543234f0548bad5d49be8e344cd"
+     "2f7fa7a92119d9ed63703d12723937e8ba87b6f3876c33d237619ccbd60c96b9"
+     "9b9d7a851a8e26f294e778e02c8df25c8a3b15170e6f9fd6965ac5f2544ef2a9"
+     "13096a9a6e75c7330c1bc500f30a8f4407bd618431c94aeab55c9855731a95e1"
+     "e4d4cc443964b8a64defc06de3edb2363f7cb1b3c3ae2272b2c1487f626e4318"
+     "72d9086e9e67a3e0e0e6ba26a1068b8b196e58a13ccaeff4bfe5ee6288175432"
+     "4d714a034e7747598869bef1104e96336a71c3d141fa58618e4606a27507db4c"
+     "1f8bd4db8280d5e7c5e6a12786685a7e0c6733b0e3cf99f839fb211236fb4529"
+     "4d5d11bfef87416d85673947e3ca3d3d5d985ad57b02a7bb2e32beaf785a100e"
+     "720838034f1dd3b3da66f6bd4d053ee67c93a747b219d1c546c41c4e425daf93"
+     "daa27dcbe26a280a9425ee90dc7458d85bd540482b93e9fa94d4f43327128077"
      "d2ab3d4f005a9ad4fb789a8f65606c72f30ce9d281a9e42da55f7f4b9ef5bfc6"
      "c20728f5c0cb50972b50c929b004a7496d3f2e2ded387bf870f89da25793bb44"
      "ffa78fc746f85d1c88a2d1691b1e37d21832e9a44a0eeee114a00816eabcdaf9"
@@ -820,11 +801,12 @@
    '(almost-mono-themes apropospriate-theme cmake-mode company
 			company-glsl diff-hl doom-modeline doom-themes
 			ef-themes go-mode kanagawa-themes magit
-			neotree nerd-icons-completion orderless
-			org-appear org-bullets org-download projectile
+			neotree nerd-icons-completion
+			nerd-icons-ibuffer orderless org-appear
+			org-bullets org-download projectile
 			rainbow-delimiters spacious-padding
-			sweet-theme undo-fu undo-fu-session vertico
-			vterm yasnippet))
+			sweet-theme typst-ts-mode undo-fu
+			undo-fu-session vertico vterm yasnippet))
  '(package-vc-selected-packages
    '((doom-dashboard :url
 		     "https://github.com/emacs-dashboard/doom-dashboard.git"))))
