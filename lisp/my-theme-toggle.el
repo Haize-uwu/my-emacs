@@ -1,5 +1,5 @@
 (provide 'my-theme-toggle)
-(setq dark 'doom-old-hope)
+(setq dark 'doom-peacock)
 (setq light 'doom-flatwhite)
 
 
@@ -15,8 +15,6 @@
 	(message "%S  %S" current-theme new-theme))
     
     nil))
-
-
 
 
 

@@ -1,5 +1,9 @@
  ;; -*- lexical-binding: t; -*-
 
+;; EMACS SERVER START
+(require 'server)
+(unless (server-running-p)
+  (server-start))
 ;; ------------------------
 ;; Package Management Setup
 ;; ------------------------
@@ -42,18 +46,25 @@
 (electric-pair-mode 1)  ;; Enable auto-pairing for (), {}, []
 (setq electric-pair-preserve-balance t)  ;; Keep pairs balanced
 (setq use-dialog-box nil)
+(setq doc-view-mode nil)
+
 (global-display-line-numbers-mode -1)
 (global-hl-line-mode t)
 (add-hook 'window-setup-hook (lambda () (window-divider-mode -1)))
-;; (use-package doom-themes
-;;   :ensure t
-;;   :config
-;;   (load-theme 'doom-ayu-light t))
-(load-theme 'doom-old-hope t)
+(use-package doom-themes
+  :ensure t
+  :config
+  (load-theme 'doom-peacock t)
+  (custom-set-faces
+   '(default ((t :background "#030118" )))))
 
-;; (set-face-attribute 'hl-line nil
-;;                     :background "#BCE1F3"
-;;                     :extend t)
+
+(setq doom-peacock-brighter-comments t)
+
+
+(set-face-attribute 'hl-line nil
+                    :background "#4A4A4A"
+                    :extend t)
 (set-face-attribute 'region nil
                     :background "#957FB8"  
                     :distant-foreground nil)
@@ -83,34 +94,10 @@
 (setq recentf-max-menu-items 15)
 (global-set-key "\C-x\ \C-r" 'recentf-open-files)
 
-;; tab bar settings
-;; (tab-bar-mode 1)
-;; (set-face-attribute 'tab-bar nil :inherit 'mode-line :background "#AFD17Faa")
-;; (set-face-attribute 'tab-bar-tab nil :inherit 'mode-line :background "#AFD17F" :foreground "#F5F5F5")
-;; (set-face-attribute 'tab-bar-tab-inactive nil :inherit 'mode-line-inactive :foreground "black")
-;; ;; creating and deleting tabs
-;; (defun my/find-file-in-new-tab (orig-fun &rest args)
-;;   "Advice to open files in a new tab."
-;;   (tab-bar-new-tab)
-;;   (apply orig-fun args))
-
-;; (advice-add 'find-file :around #'my/find-file-in-new-tab) 
 
 
-;; (defun my/auto-close-tab-when-buffer-killed ()
-;;   "Close the current tab if it becomes empty after killing a buffer."
-;;   (when (and (one-window-p t)
-;;              (eq (length (window-list)) 1))
-;;     (tab-bar-close-tab)))
-
-;; (add-hook 'kill-buffer-hook #'my/auto-close-tab-when-buffer-killed)
-
-
-;;(set-face-attribute 'default nil :family "Anonymous Pro" :height 130)
-
-
-;;(set-face-attribute 'default nil :family "Terminus" :height 150)
-(set-face-attribute 'default nil :family "IBM Plex Mono" :height 120)
+;;(set-face-attribute 'default nil :family "GoMono Nerd Font " :height 120)
+(set-face-attribute 'default nil :family "GeistMono Nerd Font" :height 120)
 (set-face-attribute 'variable-pitch nil :family "Alegreya":height 140)
 ;; (set-face-attribute 'default nil :family "Iosevka" :height 155)
 ;; (set-face-attribute 'variable-pitch nil :family "Iosevka Aile")
@@ -133,6 +120,11 @@
   :ensure nil
   :defer t
   :hook (after-init . electric-pair-mode))
+
+;; LISP PAIRING MADE EASY
+(use-package paredit
+  :ensure t
+  :hook (after-init . paredit-mode))
 
 ;;;;;;;;;;;;;;;;;;
 ;; undo redo
@@ -160,6 +152,7 @@
 ;;doom modeline
 (use-package doom-modeline
   :ensure t
+  
   :config
   (doom-modeline-mode)
   (display-time-mode)
@@ -168,6 +161,7 @@
   (setq doom-modeline-buffer-encoding -1)
   (setq doom-modeline-percent -1)
   (setq doom-modeline-buffer-file-name-style 'file-name))
+
 
 (setq user-emacs-directory (expand-file-name "~/.my-emacs/"))
 (add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
@@ -189,18 +183,54 @@
   (when (display-graphic-p)
     (haize/show-welcome-buffer)))
 
-;;(add-hook 'server-after-make-frame-hook #'my-show-dashboard)
+
 
 ;; ------------------------
 ;; Buffer Management (Ibuffer)
 ;; ------------------------
 (global-set-key (kbd "C-x C-b") 'ibuffer)
-(setq ibuffer-formats
+
+
+(use-package ibuffer
+  :ensure nil
+  :config
+  (setq ibuffer-expert t)
+  (setq ibuffer-display-summar nil)
+  (setq ibuffer-use-other-window nil)
+  (setq ibuffer-show-empty-filter-groups nil)
+  (setq ibuffer-default-sorting-mode 'filename/process)
+  (setq ibuffer-title-face 'font-loc-doc-face)
+  (setq ibuffer-use-header-line t)
+  (setq ibuffer-default-shrink-to-minimum-size nil)
+  (setq ibuffer-formats
       '((mark modified read-only " "
-              (name 18 18 :left :elide)
+              (name 30 30 :left :elide)
               " "
               
-              (mode 16 16 :left :elide))))
+              (mode 16 16 :left :elide)
+	      " " filename-and-process)))
+  (setq ibuffer-saved-filter-groups
+	'(("Main"
+	   ("Directories" (mode . direc-mode))
+	   ("C++" ( or (mode .c++-mode)
+		    (mode . c++-ts-mode)
+		    (mode . c-mode)))
+	   ("GLSL" (or
+		    (name . "\.glsl$")
+		    (name . "\.fs$")
+		    (name . "\.vs$")))
+	   ("E-Lisp" (mode . emacs-lisp-mode))
+	   ("Org" (mode . org-mode))
+	   ("Emacs" (or
+		     (mode . "^\\*Help\\*$")
+		     (mode . "^\\*Welcome\\*$")
+		     (mode . "^\\*info\\*$")
+		     (mode . "^\\*scratch\\*$")
+		     (mode . "^\\*Backtrace\\*$")
+		     (mode . "\\*Messages\\*$")))
+	   ("Org Agenda" (mode . "^\\*Org Agenda\\*$")))))
+  :hook
+  (ibuffer-mode . (lambda () (ibuffer-switch-to-saved-filter-groups "Main"))))
 
 ;; -----------------------
 ;; File position save
@@ -320,6 +350,14 @@
 (add-hook 'org-mode-hook #'my-add-electric-pairs)
 (add-hook 'latex-mode-hook #'my-add-electric-pairs)
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; INLINE ELISP OVERLAY ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+(use-package eros
+  :config
+  (eros-mode 1))
+
 ;;;;;;;;;;;;;;;;;;;;;;
 ;; ORG MODERN ;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;
@@ -397,6 +435,12 @@
   :ensure nil
   :bind ("C-x d" . dired))
 
+(use-package dired-open
+  :ensure t
+  :config
+  (setq dired-open-extensions `(("pdf" . "zathura"))))
+
+
 
 ;; ------------------------
 ;; Lightweight Syntax Highlighting & Auto-completion
@@ -414,6 +458,13 @@
   :config
   (keymap-set typst-ts-mode-map "C-c C-c" #'typst-ts-tmenu))
 
+;; PYTHON STUFF
+(use-package elpy
+  :ensure t
+  :after (company highlight-indentation pyvenv yasnippet s python)
+  :init
+  (elpy-enable))
+
 (use-package eglot
   :hook ((c-mode . eglot-ensure)
          (c++-mode . eglot-ensure)
@@ -425,11 +476,20 @@
   (setq eglot-ignored-server-capabilities '(:hoverProvider)) ;; Disable if unwanted
   (setq eglot-send-changes-idle-time 0.5)  ;; Reduce delay in sending changes
   (setq eglot-autoshutdown t)  ;; Automatically shutdown LSP servers when not needed
+  ;; (setq eglot-workspace-configuration
+  ;;     '((:python-lsp-server . ((commandPath . "/home/remoosa/disent_env/bin/pyls")))))
+
 
   (add-to-list 'eglot-server-programs
                '((c++-mode c-mode) . ("clangd" "--header-insertion=never")))
   (add-to-list 'eglot-server-programs
 	       '(typst-ts-mode . ("tinymist")))
+  (add-to-list
+   'eglot-server-programs
+   `(python-mode
+     . ,(eglot-alternatives
+         '("/home/haize/venv/bin/pylsp"
+           "/ssh:mss/~/disent_env/bin/pylsp"))))
   
   ;; Set up keybindings similar to lsp-mode
   (define-key eglot-mode-map (kbd "M-.") #'xref-find-definitions)  ;; Jump to definition
@@ -686,7 +746,14 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("19d62171e83f2d4d6f7c31fc0a6f437e8cec4543234f0548bad5d49be8e344cd"
+   '("de8f2d8b64627535871495d6fe65b7d0070c4a1eb51550ce258cd240ff9394b0"
+     "1781e8bccbd8869472c09b744899ff4174d23e4f7517b8a6c721100288311fa5"
+     "e7820b899036ae7e966dcaaec29fd6b87aef253748b7de09e74fdc54407a7a02"
+     "088cd6f894494ac3d4ff67b794467c2aa1e3713453805b93a8bcb2d72a0d1b53"
+     "fffef514346b2a43900e1c7ea2bc7d84cbdd4aa66c1b51946aade4b8d343b55a"
+     "4990532659bb6a285fee01ede3dfa1b1bdf302c5c3c8de9fad9b6bc63a9252f7"
+     "aec7b55f2a13307a55517fdf08438863d694550565dee23181d2ebd973ebd6b8"
+     "19d62171e83f2d4d6f7c31fc0a6f437e8cec4543234f0548bad5d49be8e344cd"
      "2f7fa7a92119d9ed63703d12723937e8ba87b6f3876c33d237619ccbd60c96b9"
      "9b9d7a851a8e26f294e778e02c8df25c8a3b15170e6f9fd6965ac5f2544ef2a9"
      "13096a9a6e75c7330c1bc500f30a8f4407bd618431c94aeab55c9855731a95e1"
@@ -799,22 +866,20 @@
      default))
  '(package-selected-packages
    '(almost-mono-themes apropospriate-theme cmake-mode company
-			company-glsl diff-hl doom-modeline doom-themes
-			ef-themes go-mode kanagawa-themes magit
-			neotree nerd-icons-completion
-			nerd-icons-ibuffer orderless org-appear
-			org-bullets org-download projectile
-			rainbow-delimiters spacious-padding
-			sweet-theme typst-ts-mode undo-fu
-			undo-fu-session vertico vterm yasnippet))
+			company-glsl diff-hl dired-open doom-modeline
+			doom-themes ef-themes elpy eros go-mode
+			kanagawa-themes magit neotree
+			nerd-icons-completion nerd-icons-ibuffer
+			openwith orderless org-appear org-bullets
+			org-download paredit pdf-tools projectile
+			rainbow-delimiters solaire-mode
+			spacious-padding sweet-theme typst-ts-mode
+			undo-fu undo-fu-session vertico vterm
+			yasnippet))
  '(package-vc-selected-packages
    '((doom-dashboard :url
 		     "https://github.com/emacs-dashboard/doom-dashboard.git"))))
 
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+
  
+
