@@ -1,5 +1,5 @@
 (provide 'my-dashboard)
-
+;; tracked?
 (defun haize/show-welcome-buffer ()
   "Show *Welcome* buffer,"
   (interactive)
