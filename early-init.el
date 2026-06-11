@@ -7,7 +7,7 @@
       initial-scratch-message nil)
 ;; set the frame size
 (setq default-frame-alist '((width . 160) (height . 50) (pixel-width . 1200) (pixel-height . 800)))
-
+(setq-default tab-width 4)
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
@@ -38,7 +38,7 @@
   ;; These colors should match your selected theme for maximum effect
   ;; Note that for catppuccin whenever we create a new frame or open it on terminal
   ;; it is necessary to reload the theme.
-   (set-face-attribute 'default nil :background "#191A1D" :foreground "#838BA6"))
+  (set-face-attribute 'default nil :background "#191A1D" :foreground "#838BA6"))
 ;;   (set-face-attribute 'default nil :background "#262626" :foreground "#afafaf"))
 
 
