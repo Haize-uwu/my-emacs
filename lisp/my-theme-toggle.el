@@ -1,3 +1,4 @@
+;;; -*- lexical-binding: t; -*-
 (provide 'my-theme-toggle)
 (setq dark 'doom-peacock)
 (setq light 'doom-flatwhite)

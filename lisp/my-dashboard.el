@@ -1,3 +1,4 @@
+;;; -*- lexical-binding: t; -*-
 (provide 'my-dashboard)
 ;; tracked?
 (defun haize/show-welcome-buffer ()
@@ -23,7 +24,7 @@
   (when-let* ((inhibit-read-only t)
 	      (welcome-buffer (get-buffer "*Welcome*"))
 	      (window (get-buffer-window welcome-buffer))
-	      (image-path "~/Pictures/start1.gif")
+	      (image-path "~/Pictures/emacs.svg")
 	      (image (create-image image-path nil nil :max-height 300))
 	      (image-height (cdr (image-size image)))
 	      (image-width (car (image-size image)))

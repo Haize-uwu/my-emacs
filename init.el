@@ -1,4 +1,4 @@
- ;; -*- lexical-binding: t; -*-
+;; -*- lexical-binding: t; -*-
 
 ;; EMACS SERVER START
 (require 'server)
@@ -48,31 +48,56 @@
 (setq use-dialog-box nil)
 (setq doc-view-mode nil)
 
+;; y/n shorthand
+(fset 'yes-or-no-p 'y-or-n-p)
+
+;; open file at last edited position
+(save-place-mode 1) 
+
+;; recent files list in minbuffer
+(recentf-mode 1)
+(setq recentf-max-menu-items 15)
+(global-set-key "\C-x\ \C-r" 'recentf-open-files)
+
+;; minibuffer memory
+(setq history-length 25)
+(savehist-mode 1)
+
 (global-display-line-numbers-mode -1)
 (global-hl-line-mode t)
 (add-hook 'window-setup-hook (lambda () (window-divider-mode -1)))
+
+;; Revert buffers when the file has changed
+(global-auto-revert-mode 1)
+;; and for dired on creation of files
+(setq global-auto-revert-non-file-buffers t)
+
+;; Custom  file location to clean up init.el
+(setq custom-file (locate-user-emacs-file "custom-vars.el"))
+(load custom-file 'noerror 'nomessage)
 
 (use-package doom-themes
   :ensure t
   :config
 
-  (load-theme 'doom-peacock t)
-  (custom-theme-set-faces
-   'doom-peacock
-   '(default ((t (:background "#030118")))))
-  (enable-theme 'doom-peacock))
+  (load-theme 'doom-feather-dark t))
+  ;; (custom-theme-set-faces
+  ;;  'doom-peacock
+  ;;  '(default ((t (:background "#030118")))))
+  ;; (enable-theme 'doom-peacock))
 
-(setq doom-peacock-brighter-comments t)
+ 
+(setq doom-feather-brighter-comments t)
 
 
-(set-face-attribute 'hl-line nil
-                    :background "#4A4A4A"
-                    :extend t)
+;; (set-face-attribute 'hl-line nil
+;;                     :background "#4A4A4A"
+;;                     :extend t)
 (set-face-attribute 'region nil
                     :background "#957FB8"  
                     :distant-foreground nil)
 ;;(set-face-attribute 'cursor nil :background "#ff0000")
-(set-face-attribute 'region nil :background "#555577" :extend t)
+;;(set-face-attribute 'region nil :background "#555577" :extend t)
 ;;(set-face-background 'hl-line "#111111")
 
 ;; transparency
@@ -86,22 +111,12 @@
 (global-set-key (kbd "C-c b") #'previous-buffer)
 (global-set-key (kbd "C-c n") #'next-buffer)
 (global-set-key (kbd "C-c v") #'mode-line-other-buffer)
+(global-set-key (kbd "C-c g") #'comment-line)
+;; test comment
 
-
-
-;; open file at last edited position
-(setq save-place-mode t)
-
-;; recent files list in minbuffer
-(recentf-mode 1)
-(setq recentf-max-menu-items 15)
-(global-set-key "\C-x\ \C-r" 'recentf-open-files)
-
-
-
-(set-face-attribute 'default nil :family "Go Mono" :height 120)
-;;(set-face-attribute 'default nil :family "GeistMono Nerd Font" :height 130)
-(set-face-attribute 'variable-pitch nil :family "Alegreya":height 140)
+;;(set-face-attribute 'default nil :family "Go Mono" :height 90)
+(set-face-attribute 'default nil :family "GeistMono Nerd Font" :height 100)
+(set-face-attribute 'variable-pitch nil :family "GeistMono Nerd Font":height 140)
 ;; (set-face-attribute 'default nil :family "Iosevka" :height 155)
 ;; (set-face-attribute 'variable-pitch nil :family "Iosevka Aile")
 ;;(set-face-attribute 'org-modern-symbol nil :family "Iosevka")
@@ -295,6 +310,13 @@
   (setq org-appear-autolinks t
         org-appear-autoemphasis t
         org-appear-autosubmarkers t))
+
+
+;; ----------------------
+;; Org Roam Configuration
+;; ----------------------
+
+
 ;; (use-package corfu
 ;;   :ensure t
 ;;   :init
@@ -497,7 +519,7 @@
    `(python-mode
      . ,(eglot-alternatives
          '("/home/haize/venv/bin/pylsp"
-           "/ssh:mss/~/disent_env/bin/pylsp"))))
+           "/ssh:mss:/home-mscluster/remoosa/ICLR/iclr/bin/pylsp"))))
   
   ;; Set up keybindings similar to lsp-mode
   (define-key eglot-mode-map (kbd "M-.") #'xref-find-definitions)  ;; Jump to definition
@@ -705,7 +727,7 @@
   :no-require t
   :defer t
   :init
-  (defvar emacs-solo-center-document-desired-width 90
+  (defvar emacs-solo-center-document-desired-width 120
     "The desired width of a document centered in the window.")
 
   (defun emacs-solo/center-document--adjust-margins ()
@@ -747,155 +769,3 @@
 ;; ------------------------
 (setq gc-cons-threshold (* 100 1000 1000))  ;; 100MB during startup
 (add-hook 'after-init-hook (lambda () (setq gc-cons-threshold (* 10 1000 1000))))  ;; Reset to 10MB
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   '("be2cf7aada403c8ce552e29fce64b1cda28db4cdc72c1152a6e8989c8ac69847"
-	 "6965a903ced31bd58caddb7e7035aadc47f8b0a5c57f246b698be2dfdfed2c4e"
-	 "4594d6b9753691142f02e67b8eb0fda7d12f6cc9f1299a49b819312d6addad1d"
-	 "cf0e1f8a027d3a38602ce6628399db5550ad7f0598c01979e01ab45b8a631639"
-	 "967c23e9ba179b80560774419f081df22e7674aac23c5c550b817e4a1ce7d058"
-	 "10e330880269244ae45ae9e02fe6f55766da9e15036e7c7f07d7ce228195deb5"
-	 "ed2efc874021b54144b9ed9874e4d9c036090488aeabe19c9ac28576a162ec12"
-	 "de8f2d8b64627535871495d6fe65b7d0070c4a1eb51550ce258cd240ff9394b0"
-	 "1781e8bccbd8869472c09b744899ff4174d23e4f7517b8a6c721100288311fa5"
-	 "e7820b899036ae7e966dcaaec29fd6b87aef253748b7de09e74fdc54407a7a02"
-	 "088cd6f894494ac3d4ff67b794467c2aa1e3713453805b93a8bcb2d72a0d1b53"
-	 "fffef514346b2a43900e1c7ea2bc7d84cbdd4aa66c1b51946aade4b8d343b55a"
-	 "4990532659bb6a285fee01ede3dfa1b1bdf302c5c3c8de9fad9b6bc63a9252f7"
-	 "aec7b55f2a13307a55517fdf08438863d694550565dee23181d2ebd973ebd6b8"
-	 "19d62171e83f2d4d6f7c31fc0a6f437e8cec4543234f0548bad5d49be8e344cd"
-	 "2f7fa7a92119d9ed63703d12723937e8ba87b6f3876c33d237619ccbd60c96b9"
-	 "9b9d7a851a8e26f294e778e02c8df25c8a3b15170e6f9fd6965ac5f2544ef2a9"
-	 "13096a9a6e75c7330c1bc500f30a8f4407bd618431c94aeab55c9855731a95e1"
-	 "e4d4cc443964b8a64defc06de3edb2363f7cb1b3c3ae2272b2c1487f626e4318"
-	 "72d9086e9e67a3e0e0e6ba26a1068b8b196e58a13ccaeff4bfe5ee6288175432"
-	 "4d714a034e7747598869bef1104e96336a71c3d141fa58618e4606a27507db4c"
-	 "1f8bd4db8280d5e7c5e6a12786685a7e0c6733b0e3cf99f839fb211236fb4529"
-	 "4d5d11bfef87416d85673947e3ca3d3d5d985ad57b02a7bb2e32beaf785a100e"
-	 "720838034f1dd3b3da66f6bd4d053ee67c93a747b219d1c546c41c4e425daf93"
-	 "daa27dcbe26a280a9425ee90dc7458d85bd540482b93e9fa94d4f43327128077"
-	 "d2ab3d4f005a9ad4fb789a8f65606c72f30ce9d281a9e42da55f7f4b9ef5bfc6"
-	 "c20728f5c0cb50972b50c929b004a7496d3f2e2ded387bf870f89da25793bb44"
-	 "ffa78fc746f85d1c88a2d1691b1e37d21832e9a44a0eeee114a00816eabcdaf9"
-	 "c038d994d271ebf2d50fa76db7ed0f288f17b9ad01b425efec09519fa873af53"
-	 "4c16a8be2f20a68f0b63979722676a176c4f77e2216cc8fe0ea200f597ceb22e"
-	 "e14289199861a5db890065fdc5f3d3c22c5bac607e0dbce7f35ce60e6b55fc52"
-	 "fd22a3aac273624858a4184079b7134fb4e97104d1627cb2b488821be765ff17"
-	 "b9761a2e568bee658e0ff723dd620d844172943eb5ec4053e2b199c59e0bcc22"
-	 "e8ceeba381ba723b59a9abc4961f41583112fc7dc0e886d9fc36fa1dc37b4079"
-	 "4b88b7ca61eb48bb22e2a4b589be66ba31ba805860db9ed51b4c484f3ef612a7"
-	 "a9eeab09d61fef94084a95f82557e147d9630fbbb82a837f971f83e66e21e5ad"
-	 "c2c2327f43e997b96cacd297cbd85f9e85879657c5ac69ad10ed568e768fcc36"
-	 "ea4dd126d72d30805c083421a50544e235176d9698c8c541b824b60912275ba1"
-	 "71b688e7ef7c844512fa7c4de7e99e623de99a2a8b3ac3df4d02f2cd2c3215e7"
-	 "a368631abdadffb6882f9994637d7216167912311447f1ec02f9dc58e9cc62a9"
-	 "8d3ef5ff6273f2a552152c7febc40eabca26bae05bd12bc85062e2dc224cde9a"
-	 "1bc640af8b000ae0275dbffefa2eb22ec91f6de53aca87221c125dc710057511"
-	 "0f1341c0096825b1e5d8f2ed90996025a0d013a0978677956a9e61408fcd2c77"
-	 "d97ac0baa0b67be4f7523795621ea5096939a47e8b46378f79e78846e0e4ad3d"
-	 "7de64ff2bb2f94d7679a7e9019e23c3bf1a6a04ba54341c36e7cf2d2e56e2bcc"
-	 "3f24dd8f542f4aa8186a41d5770eb383f446d7228cd7a3413b9f5e0ec0d5f3c0"
-	 "83550d0386203f010fa42ad1af064a766cfec06fc2f42eb4f2d89ab646f3ac01"
-	 "f1b2de4bc88d1120782b0417fe97f97cc9ac7c5798282087d4d1d9290e3193bb"
-	 "1dcac4042a8331449ae1cadcf83b121854bec0371f861954d3ff791e81c8dfc6"
-	 "aeb5508a548f1716142142095013b6317de5869418c91b16d75ce4043c35eb2b"
-	 "5244ba0273a952a536e07abaad1fdf7c90d7ebb3647f36269c23bfd1cf20b0b8"
-	 "5c7720c63b729140ed88cf35413f36c728ab7c70f8cd8422d9ee1cedeb618de5"
-	 "211621592803ada9c81ec8f8ba0659df185f9dc06183fcd0e40fbf646c995f23"
-	 "da75eceab6bea9298e04ce5b4b07349f8c02da305734f7c0c8c6af7b5eaa9738"
-	 "7ec8fd456c0c117c99e3a3b16aaf09ed3fb91879f6601b1ea0eeaee9c6def5d9"
-	 "e8bd9bbf6506afca133125b0be48b1f033b1c8647c628652ab7a2fe065c10ef0"
-	 "f64189544da6f16bab285747d04a92bd57c7e7813d8c24c30f382f087d460a33"
-	 "ffafb0e9f63935183713b204c11d22225008559fa62133a69848835f4f4a758c"
-	 "c1d5759fcb18b20fd95357dcd63ff90780283b14023422765d531330a3d3cec2"
-	 "0c83e0b50946e39e237769ad368a08f2cd1c854ccbcd1a01d39fdce4d6f86478"
-	 "9d5124bef86c2348d7d4774ca384ae7b6027ff7f6eb3c401378e298ce605f83a"
-	 "dccf4a8f1aaf5f24d2ab63af1aa75fd9d535c83377f8e26380162e888be0c6a9"
-	 "0d2c5679b6d087686dcfd4d7e57ed8e8aedcccc7f1a478cd69704c02e4ee36fe"
-	 "90185f1d8362727f2aeac7a3d67d3aec789f55c10bb47dada4eefb2e14aa5d01"
-	 "aff0396925324838889f011fd3f5a0b91652b88f5fd0611f7b10021cc76f9e09"
-	 "3d9938bbef24ecee9f2632cb25339bf2312d062b398f0dfb99b918f8f11e11b1"
-	 "d6b369a3f09f34cdbaed93eeefcc6a0e05e135d187252e01b0031559b1671e97"
-	 "d609d9aaf89d935677b04d34e4449ba3f8bbfdcaaeeaab3d21ee035f43321ff1"
-	 "6e18353d35efc18952c57d3c7ef966cad563dc65a2bba0660b951d990e23fc07"
-	 "b41d0a9413fb0034cea34eb8c9f89f6e243bdd76bccecf8292eb1fefa42eaf0a"
-	 "6af300029805f10970ebec4cea3134f381cd02f04c96acba083c76e2da23f3ec"
-	 "cd5f8f91cc2560c017cc9ec24a9ab637451e36afd22e00a03e08d7b1b87c29ca"
-	 "ac893acecb0f1cf2b6ccea5c70ea97516c13c2b80c07f3292c21d6eb0cb45239"
-	 "e5b6491e99e98d0586766aaf9eb32b1dad3bc3c0c7a1921849d65d3f6d8621a6"
-	 "e5494adf200eeff1505839672150dde6053e086869189c381b1ce9b792dda3a8"
-	 "d6b934330450d9de1112cbb7617eaf929244d192c4ffb1b9e6b63ad574784aad"
-	 "c5878086e65614424a84ad5c758b07e9edcf4c513e08a1c5b1533f313d1b17f1"
-	 "7964b513f8a2bb14803e717e0ac0123f100fb92160dcf4a467f530868ebaae3e"
-	 "1ad12cda71588cc82e74f1cabeed99705c6a60d23ee1bb355c293ba9c000d4ac"
-	 "6f1f6a1a3cff62cc860ad6e787151b9b8599f4471d40ed746ea2819fcd184e1a"
-	 "4ade6b630ba8cbab10703b27fd05bb43aaf8a3e5ba8c2dc1ea4a2de5f8d45882"
-	 "d0fd069415ef23ccc21ccb0e54d93bdbb996a6cce48ffce7f810826bb243502c"
-	 "8f5b54bf6a36fe1c138219960dd324aad8ab1f62f543bed73ef5ad60956e36ae"
-	 "cbd85ab34afb47003fa7f814a462c24affb1de81ebf172b78cb4e65186ba59d2"
-	 "ffba0482d3548c9494e84c1324d527f73ea4e43fff8dfd0e48faa8fc6d5c2bc7"
-	 "ae20535e46a88faea5d65775ca5510c7385cbf334dfa7dde93c0cd22ed663ba0"
-	 "df6dfd55673f40364b1970440f0b0cb8ba7149282cf415b81aaad2d98b0f0290"
-	 "571661a9d205cb32dfed5566019ad54f5bb3415d2d88f7ea1d00c7c794e70a36"
-	 "77fff78cc13a2ff41ad0a8ba2f09e8efd3c7e16be20725606c095f9a19c24d3d"
-	 "7c28419e963b04bf7ad14f3d8f6655c078de75e4944843ef9522dbecfcd8717d"
-	 "c8c4baac2988652a760554e0e7ce11a0fe0f8468736be2b79355c9d9cc14b751"
-	 "3c08da65265d80a7c8fc99fe51df3697d0fa6786a58a477a1b22887b4f116f62"
-	 "30d174000ea9cbddecd6cc695943afb7dba66b302a14f9db5dd65074e70cc744"
-	 "f9fe320c8e4e759d4788c6d5aa30c65caae7153a844d90618565b8d9e49b16e0"
-	 "c21904759f8d6d73f8be4a03c71a81b9908e71276c490f664022bf997111b458"
-	 "6e8f43c0b76fc272cfa811b709c62fb4bf79855cf2ce0389a6539eda7d0ca4ca"
-	 "9b18d731d2660fd002e10582b206128c0b97eebe2e4a6570db15cb27613f2c86"
-	 "b1162ee87ca94024dbb677dc40c8d8e5ec02d3ccf505bed683f4aa11604468d0"
-	 "72ab3be5ff65bead7f537bf684a2369f8977d57b76c7781197e2c58e36a07254"
-	 "93011fe35859772a6766df8a4be817add8bfe105246173206478a0706f88b33d"
-	 "452068f2985179294c73c5964c730a10e62164deed004a8ab68a5d778a2581da"
-	 "350fef8767e45b0f81dd54c986ee6854857f27067bac88d2b1c2a6fa7fecb522"
-	 "ff24d14f5f7d355f47d53fd016565ed128bf3af30eb7ce8cae307ee4fe7f3fd0"
-	 "dfb1c8b5bfa040b042b4ef660d0aab48ef2e89ee719a1f24a4629a0c5ed769e8"
-	 "b754d3a03c34cfba9ad7991380d26984ebd0761925773530e24d8dd8b6894738"
-	 "02d422e5b99f54bd4516d4157060b874d14552fe613ea7047c4a5cfa1288cf4f"
-	 "48042425e84cd92184837e01d0b4fe9f912d875c43021c3bcb7eeb51f1be5710"
-	 "0325a6b5eea7e5febae709dab35ec8648908af12cf2d2b569bedc8da0a3a81c1"
-	 "b5fd9c7429d52190235f2383e47d340d7ff769f141cd8f9e7a4629a81abc6b19"
-	 "2721b06afaf1769ef63f942bf3e977f208f517b187f2526f0e57c1bd4a000350"
-	 "3061706fa92759264751c64950df09b285e3a2d3a9db771e99bcbb2f9b470037"
-	 "e1f4f0158cd5a01a9d96f1f7cdcca8d6724d7d33267623cc433fe1c196848554"
-	 "b9c002dc827fb75b825da3311935c9f505d48d7ee48f470f0aa7ac5d2a595ab2"
-	 "36c5acdaf85dda0dad1dd3ad643aacd478fb967960ee1f83981d160c52b3c8ac"
-	 "df39cc8ecf022613fc2515bccde55df40cb604d7568cb96cd7fe1eff806b863b"
-	 "e85a354f77ae6c2e47667370a8beddf02e8772a02e1f7edb7089e793f4762a45"
-	 "b3ba955a30f22fe444831d7bc89f6466b23db8ce87530076d1f1c30505a4c23b"
-	 "19b62f442479efd3ca4c1cef81c2311579a98bbc0f3684b49cdf9321bd5dfdbf"
-	 "a3a71b922fb6cbf9283884ac8a9109935e04550bcc5d2a05414a58c52a8ffc47"
-	 "00d7122017db83578ef6fba39c131efdcb59910f0fac0defbe726da8072a0729"
-	 "596e4a7606d6cc3d17e10ea3af5e88813244649d85c51c02a81517b61d19073a"
-	 "cee5c56dc8b95b345bfe1c88d82d48f89e0f23008b0c2154ef452b2ce348da37"
-	 "59c36051a521e3ea68dc530ded1c7be169cd19e8873b7994bfc02a216041bf3b"
-	 "fae5872ff90462502b3bedfe689c02d2fa281bc63d33cb007b94a199af6ccf24"
-	 default))
- '(package-selected-packages nil)
- '(package-vc-selected-packages
-   '((doom-dashboard :url
-					 "https://github.com/emacs-dashboard/doom-dashboard.git"))))
-
-
- 
-
-;;(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
-;; '(default ((t :background "#030118"))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
