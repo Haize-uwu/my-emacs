@@ -101,9 +101,9 @@
 ;;(set-face-background 'hl-line "#111111")
 
 ;; transparency
-(set-frame-parameter nil 'alpha-background 100)
+(set-frame-parameter nil 'alpha-background 80)
 ;;(set-face-attribute 'default nil  :background "#ECF0F1")
-(add-to-list 'default-frame-alist '(alpha-background . 100))
+(add-to-list 'default-frame-alist '(alpha-background . 80))
 
 
 

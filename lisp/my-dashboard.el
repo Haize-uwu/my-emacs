@@ -25,7 +25,7 @@
 	      (welcome-buffer (get-buffer "*Welcome*"))
 	      (window (get-buffer-window welcome-buffer))
 	      (image-path "~/Pictures/emacs.svg")
-	      (image (create-image image-path nil nil :max-height 300))
+	      (image (create-image image-path nil nil :max-height 300 :mask '(heuristic t)))
 	      (image-height (cdr (image-size image)))
 	      (image-width (car (image-size image)))
 	      (top-margin (floor (/ (- (window-height window) image-height) 2)))
